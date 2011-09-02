@@ -28,9 +28,9 @@ module Smailer
         if changed?
           save(false)
 
-          if finished.mail_campaign
-            finished.mail_campaign.opened_mails_count += 1
-            finished.mail_campaign.save(false)
+          if mail_campaign
+            mail_campaign.opened_mails_count += 1
+            mail_campaign.save(false)
           end
         end
       end
