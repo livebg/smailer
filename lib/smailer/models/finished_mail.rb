@@ -15,6 +15,8 @@ module Smailer
 
       delegate :mailing_list, :to => :mail_campaign, :allow_nil => true
 
+      before_save :update_mail_campaign_counts
+
       def status_text
         Statuses.constants.each do |constant_name|
           return constant_name if Statuses.const_get(constant_name) == status
@@ -24,15 +26,7 @@ module Smailer
 
       def opened!
         self.opened = true
-
-        if changed?
-          save(false)
-
-          if mail_campaign
-            mail_campaign.opened_mails_count += 1
-            mail_campaign.save(false)
-          end
-        end
+        Compatibility.save_without_validation self if changed?
       end
 
       def self.add(queued_mail, status = Statuses::SENT)
@@ -50,10 +44,19 @@ module Smailer
 
         if finished.mail_campaign
           finished.mail_campaign.sent_mails_count += 1
-          finished.mail_campaign.save(false)
+          Compatibility.save_without_validation finished.mail_campaign
         end
 
         finished
+      end
+
+      protected
+
+      def update_mail_campaign_counts
+        if opened_changed?
+          mail_campaign.opened_mails_count += opened_was ? -1 : 1
+          Compatibility.save_without_validation mail_campaign
+        end
       end
     end
   end
