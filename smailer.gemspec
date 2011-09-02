@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Dimitar Dimitrov']
   s.email       = ['wireman@gmail.com']
-  s.homepage    = "http://rubygems.org/gems/smailer"
-  s.summary     = "A simple mailer for newsletters with basic campaign management, queue and unsubscribe support."
-  s.description = "A simple mailer for newsletters with basic campaign management, queue and unsubscribe support."
+  s.homepage    = "http://github.com/mitio/smailer"
+  s.summary     = "A simple newsletter mailer for Rails."
+  s.description = "A simple mailer for newsletters with basic campaign management, queue and unsubscribe support. To be used within Rails."
 
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "smailer"
