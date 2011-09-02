@@ -11,6 +11,7 @@ module Smailer
       validates_presence_of :mail_campaign_id, :from, :to, :retries, :status
       validates_numericality_of :mail_campaign_id, :retries, :status, :only_integer => true, :allow_nil => true
       validates_length_of :from, :to, :subject, :last_error, :maximum => 255
+      validates_uniqueness_of :key, :allow_nil => true
 
       delegate :mailing_list, :to => :mail_campaign, :allow_nil => true
 
@@ -37,7 +38,7 @@ module Smailer
       def self.add(queued_mail, status = Statuses::SENT)
         finished = self.new
 
-        [:mail_campaign_id, :from, :to, :subject, :body_html, :body_text, :retries, :last_retry_at, :last_error].each do |field|
+        [:mail_campaign_id, :key, :from, :to, :subject, :body_html, :body_text, :retries, :last_retry_at, :last_error].each do |field|
           finished.send("#{field}=", queued_mail.send(field))
         end
 
