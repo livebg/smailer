@@ -1,9 +1,13 @@
-class MailingList < ActiveRecord::Base
-  has_many :mail_campaigns
+module Smailer
+  module Models
+    class MailingList < ActiveRecord::Base
+      has_many :mail_campaigns
 
-  validates_presence_of :name
-  validates_uniqueness_of :name
-  validates_length_of :name, :maximum => 255
+      validates_presence_of :name
+      validates_uniqueness_of :name
+      validates_length_of :name, :maximum => 255
 
-  attr_accessible :name
+      attr_accessible :name
+    end
+  end
 end
