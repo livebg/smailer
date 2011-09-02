@@ -1,7 +1,7 @@
 module Smailer
   module Models
     class Property < ActiveRecord::Base
-      table_name_prefix 'smailer'
+      set_table_name 'smailer_properties'
 
       validates_presence_of :name
       validates_uniqueness_of :name
