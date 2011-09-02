@@ -1,3 +1,4 @@
 module Smailer
-  # Your code goes here...
+  autoload :VERSION,      'smailer/version'
+  autoload :Models,       'smailer/models'
 end
