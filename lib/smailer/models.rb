@@ -1,10 +1,10 @@
 module Smailer
   module Models
-    autoload :MailingList,    'models/mailing_list'
-    autoload :MailCampaign,   'models/mail_campaign'
-    autoload :MailKey,        'models/mail_key'
-    autoload :QueuedMail,     'models/queued_mail'
-    autoload :FinishedMail,   'models/finished_mail'
-    autoload :Property,       'models/property'
+    autoload :MailingList,    'smailer/models/mailing_list'
+    autoload :MailCampaign,   'smailer/models/mail_campaign'
+    autoload :MailKey,        'smailer/models/mail_key'
+    autoload :QueuedMail,     'smailer/models/queued_mail'
+    autoload :FinishedMail,   'smailer/models/finished_mail'
+    autoload :Property,       'smailer/models/property'
   end
 end

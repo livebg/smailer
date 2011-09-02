@@ -1,5 +1,5 @@
 module Smailer
   module Tasks
-    autoload :Send, 'tasks/send'
+    autoload :Send, 'smailer/tasks/send'
   end
 end
