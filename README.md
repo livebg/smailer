@@ -16,6 +16,10 @@ Then run `bundle install` and you should be ready to go.
 
 TODO
 
+## TODO
+
+* Add a migration generator
+
 ## Contribution
 
 Patches are always welcome. In case you find any issues with this code, please use the project's [Issues](http://github.com/mitio/smailer/issues) page on Github to report them. Feel free to contribute! :)
