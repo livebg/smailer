@@ -1,0 +1,3 @@
+module Smailer
+  # Your code goes here...
+end
