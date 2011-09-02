@@ -19,6 +19,7 @@ TODO
 ## TODO
 
 * Add a migration generator
+* Tests, tests, tests
 
 ## Contribution
 
