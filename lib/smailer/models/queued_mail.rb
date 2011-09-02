@@ -24,10 +24,11 @@ module Smailer
 
       def interpolate(text)
         {
-          :email           => to,
-          :escaped_email   => lambda { ERB::Util.h(to) },
-          :email_key       => lambda { MailKey.get(to) },
-          :mailing_list_id => lambda { mailing_list.id },
+          :email            => to,
+          :escaped_email    => lambda { ERB::Util.h(to) },
+          :email_key        => lambda { MailKey.get(to) },
+          :mailing_list_id  => lambda { mailing_list.id },
+          :mail_campaign_id => mail_campaign_id,
         }.each do |variable, interpolation|
           text.gsub! "%{#{variable}}" do
             interpolation.respond_to?(:call) ? interpolation.call : interpolation.to_s
