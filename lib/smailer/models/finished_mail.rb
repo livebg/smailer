@@ -21,6 +21,19 @@ module Smailer
         nil
       end
 
+      def opened!
+        self.opened = true
+
+        if changed?
+          save(false)
+
+          if finished.mail_campaign
+            finished.mail_campaign.opened_mails_count += 1
+            finished.mail_campaign.save(false)
+          end
+        end
+      end
+
       def self.add(queued_mail, status = Statuses::SENT)
         finished = self.new
 
@@ -33,6 +46,11 @@ module Smailer
 
         finished.save!
         queued_mail.destroy
+
+        if finished.mail_campaign
+          finished.mail_campaign.sent_mails_count += 1
+          finished.mail_campaign.save(false)
+        end
 
         finished
       end

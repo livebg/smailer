@@ -41,6 +41,11 @@ module Smailer
         "Campaign ##{id} (#{mailing_list.name})"
       end
 
+      def hit_rate
+        return nil if sent_mails_count == 0
+        opened_mails_count.to_f / sent_mails_count
+      end
+
       def self.unsubscribe_methods
         methods = {}
         UnsubscribeMethods.constants.map do |method_name|
