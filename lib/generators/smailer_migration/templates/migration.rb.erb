@@ -1,4 +1,4 @@
-class CreateSmailerProperties < ActiveRecord::Migration
+class <%= @migration_name %> < ActiveRecord::Migration
   def self.up
     create_table "mailing_lists", :force => true do |t|
       t.string   "name"

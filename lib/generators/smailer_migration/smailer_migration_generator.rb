@@ -1,19 +1,16 @@
-class SmailerMigrationGenerator < Rails::Generators::Base
+require 'rails/generators/active_record'
+
+class PaperclipGenerator < ActiveRecord::Generators::Base
   desc "This generator creates a migration file containing definitions of the tables needed to run Smailer."
 
-  def create_migration_file
-    root        = File.dirname(__FILE__)
-    source      = File.expand_path 'templates/migration.rb', root
-    destination = Rails.root.join("db/migrate/#{next_migration_number}_create_smailer_tables.rb")
-
-    FileUtils.cp source, destination
-
-    puts "Created #{destination}"
+  def self.source_root
+    @source_root ||= File.expand_path('../templates', __FILE__)
   end
 
-  protected
+  def generate_migration
+    file_name       = 'create_smailer_tables'
+    @migration_name = file_name.camelize
 
-  def next_migration_number
-    Time.now.utc.strftime("%Y%m%d%H%M%S")
+    migration_template 'migration.rb.erb', "db/migrate/#{file_name}.rb"
   end
 end
