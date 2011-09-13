@@ -1,6 +1,4 @@
-require 'rails/generators/active_record'
-
-class SmailerMigrationGenerator < ActiveRecord::Generators::Base
+class SmailerMigrationGenerator < Rails::Generators::Base
   desc "This generator creates a migration file containing definitions of the tables needed to run Smailer."
 
   def self.source_root
