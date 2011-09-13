@@ -18,9 +18,9 @@ Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add 
 
 ### Generate and run the migration
 
-To create the tables needed by Smailer to operate, run the `smailer_migration` generator after installing the Gem. For Rails 3, you can do this:
+To create the tables needed by Smailer to operate, run the `smailer:migration` generator after installing the Gem. For Rails 3, you can do this:
 
-	rails g smailer_migration
+	rails g smailer:migration
 
 For Rails 2.x projects, use `script/generate smailer_migration`.
 

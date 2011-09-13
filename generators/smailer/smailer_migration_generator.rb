@@ -1,4 +1,4 @@
-class SmailerMigrationGenerator < Rails::Generators::Base
+class SmailerMigrationGenerator < Rails::Generator::Base
   desc "Create a migration file with definitions of the tables needed to run Smailer."
 
   def manifest
