@@ -1,1 +1,1 @@
-require File.expand_path('../lib/smailer', __FILE__)
+require File.expand_path('../lib/smailer', File.dirname(__FILE__))
