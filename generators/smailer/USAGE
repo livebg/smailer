@@ -1,0 +1,5 @@
+Usage:
+
+  script/generate smailer_migration
+
+Creates a migration file with definitions of the tables needed to run Smailer.
