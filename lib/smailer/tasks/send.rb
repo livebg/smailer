@@ -8,9 +8,9 @@ module Smailer
           delivery_method Rails.configuration.action_mailer.delivery_method
         end
 
-        batch_size   = Smailer::Models::Property.get('queue.batch_size').to_i
-        max_retries  = Smailer::Models::Property.get('queue.max_retries').to_i
-        max_lifetime = Smailer::Models::Property.get('queue.max_lifetime').to_i
+        batch_size   = (Smailer::Models::Property.get('queue.batch_size') || 100).to_i
+        max_retries  = (Smailer::Models::Property.get('queue.max_retries') || 0).to_i
+        max_lifetime = (Smailer::Models::Property.get('queue.max_lifetime') || 172800).to_i
 
         results = []
         Smailer::Models::QueuedMail.order(:retries.asc, :id.asc).limit(batch_size).each do |queue_item|
