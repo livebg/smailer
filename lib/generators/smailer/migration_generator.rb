@@ -1,3 +1,5 @@
+require "rails/generators/active_record"
+
 module Smailer
   class MigrationGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
