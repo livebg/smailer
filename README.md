@@ -20,9 +20,19 @@ Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add 
 
 To create the tables needed by Smailer to operate, run the `smailer:migration` generator after installing the Gem. For Rails 3, you can do this:
 
-	rails g smailer:migration
+	rails g smailer:migration && bundle exec rake db:migrate
 
-For Rails 2.x projects, use `script/generate smailer_migration`.
+For Rails 2.x projects, use `script/generate smailer_migration && rake db:migrate` to generate and run the migration.
+
+### Initializing the plugin's settings
+
+Since the plugin has been designed to be managed via an admin UI, its settings are stored in a simple key-value table, interfaced by the `Smailer::Models::Property` model. Here is some sample data you can use to initialize your settings with:
+
+	Smailer::Models::Property.create! :name => 'queue.max_retries', :value => '0', :notes => '0 = unlimited.'
+	Smailer::Models::Property.create! :name => 'queue.max_lifetime', :value => '172800', :notes => 'In seconds; 0 = unlimited.'
+	Smailer::Models::Property.create! :name => 'queue.batch_size', :value => '100', :notes => 'Emails to send per run.'
+
+These properties and values are also the defaults.
 
 ## Usage and documentation
 
