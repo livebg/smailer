@@ -14,7 +14,7 @@ For Rails 3 projects, update your Gemfile and add:
 
 	gem 'smailer'
 
-Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add `gem 'smailer'` to your `environment.rb` file and then run `rake gems:install` in your project's root.
+Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add `config.gem 'smailer'` to your `environment.rb` file and then run `rake gems:install` in your project's root.
 
 ### Generate and run the migration
 
