@@ -7,6 +7,8 @@ class SmailerMigrationGenerator < Rails::Generators::Base
     destination = Rails.root.join("db/migrate/#{next_migration_number}_create_smailer_tables.rb")
 
     FileUtils.cp source, destination
+
+    puts "Created #{destination}"
   end
 
   protected
