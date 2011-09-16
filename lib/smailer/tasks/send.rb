@@ -5,7 +5,11 @@ module Smailer
     class Send
       def self.execute
         Mail.defaults do
-          delivery_method Rails.configuration.action_mailer.delivery_method
+          delivery_method if ::Compatibility.rails_3?
+            Rails.configuration.action_mailer.delivery_method
+          else
+            ActionMailer::Base.delivery_method
+          end
         end
 
         batch_size   = (Smailer::Models::Property.get('queue.batch_size') || 100).to_i
