@@ -4,12 +4,14 @@ module Smailer
   module Tasks
     class Send
       def self.execute
+        rails_delivery_method = if Compatibility.rails_3?
+          Rails.configuration.action_mailer.delivery_method
+        else
+          ActionMailer::Base.delivery_method
+        end
+
         Mail.defaults do
-          delivery_method if ::Compatibility.rails_3?
-            Rails.configuration.action_mailer.delivery_method
-          else
-            ActionMailer::Base.delivery_method
-          end
+          delivery_method rails_delivery_method
         end
 
         batch_size   = (Smailer::Models::Property.get('queue.batch_size') || 100).to_i
