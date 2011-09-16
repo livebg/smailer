@@ -4,7 +4,7 @@
 
 This project is a simple mailer for newsletters, which implements simple queue processing, basic campaign management and has some unsubscribe support.
 
-It is intended to be used within a Rails project. It has been tested with Rails 3.1.0 and Rails 2.3.5.
+It is intended to be used within a Rails project. It has been tested with Rails 3.0.x, Rails 3.1.0 and Rails 2.3.5.
 
 ## Install
 
