@@ -10,7 +10,7 @@ module Smailer
 
       validates_presence_of :mail_campaign_id, :from, :to, :retries, :status
       validates_numericality_of :mail_campaign_id, :retries, :status, :only_integer => true, :allow_nil => true
-      validates_length_of :from, :to, :subject, :last_error, :maximum => 255
+      validates_length_of :from, :to, :subject, :last_error, :maximum => 255, :allow_nil => true
       validates_uniqueness_of :key, :allow_nil => true
 
       delegate :mailing_list, :to => :mail_campaign, :allow_nil => true

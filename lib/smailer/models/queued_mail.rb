@@ -9,7 +9,7 @@ module Smailer
       validates_uniqueness_of :to, :scope => :mail_campaign_id
       validates_uniqueness_of :key
       validates_numericality_of :mail_campaign_id, :retries, :only_integer => true, :allow_nil => true
-      validates_length_of :to, :last_error, :maximum => 255
+      validates_length_of :to, :last_error, :maximum => 255, :allow_nil => true
 
       attr_accessible :mail_campaign_id, :to
 
