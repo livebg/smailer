@@ -20,11 +20,18 @@ module Smailer
 
         results = []
 
+        # clean up any old locked items
+        Smailer::Models::QueuedMail.update_all({:locked => false}, ['locked = ? AND locked_at <= ?', true, 1.hour.ago.utc])
+
+        # load the queue items to process
         items_to_process = if Compatibility.rails_3?
-          Smailer::Models::QueuedMail.order(:retries.asc, :id.asc).limit(batch_size)
+          Smailer::Models::QueuedMail.where(:locked => false).order(:retries.asc, :id.asc).limit(batch_size)
         else
-          Smailer::Models::QueuedMail.all(:order => 'retries ASC, id ASC', :limit => batch_size)
+          Smailer::Models::QueuedMail.all(:conditions => {:locked => false}, :order => 'retries ASC, id ASC', :limit => batch_size)
         end
+
+        # lock the queue items
+        Smailer::Models::QueuedMail.update_all({:locked => true, :locked_at => Time.now.utc}, {:id => items_to_process.map(&:id)})
 
         items_to_process.each do |queue_item|
           # try to send the email
@@ -39,7 +46,8 @@ module Smailer
           mail.raise_delivery_errors = true
 
           queue_item.last_retry_at = Time.now
-          queue_item.retries += 1
+          queue_item.retries      += 1
+          queue_item.locked        = false # unlock this email
 
           begin
             # commense delivery
