@@ -3,7 +3,14 @@ require 'mail'
 module Smailer
   module Tasks
     class Send
-      def self.execute
+      def self.execute(options = {})
+        options.reverse_merge! :verp => !options[:return_path_domain].blank?
+
+        # validate options
+        if options[:verp] && options[:return_path_domain].blank?
+          raise "VERP is enabled, but a :return_path_domain option has not been specified or is blank."
+        end
+
         rails_delivery_method = if Compatibility.rails_3?
           Rails.configuration.action_mailer.delivery_method
         else
@@ -44,6 +51,21 @@ module Smailer
             html_part { body queue_item.body_html; content_type 'text/html; charset=UTF-8' }
           end
           mail.raise_delivery_errors = true
+
+          # compute the VERP'd return_path if requested
+          # or fall-back to a global return-path if not
+          item_return_path = if options[:verp]
+             "bounces-#{queue_item.key}@#{options[:return_path_domain]}"
+          else
+            options[:return_path]
+          end
+
+          # set the return-path, if any
+          if item_return_path
+            mail.return_path   = item_return_path
+            mail['Errors-To']  = item_return_path
+            mail['Bounces-To'] = item_return_path
+          end
 
           queue_item.last_retry_at = Time.now
           queue_item.retries      += 1
