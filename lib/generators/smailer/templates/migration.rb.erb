@@ -26,12 +26,16 @@ class CreateSmailerTables < ActiveRecord::Migration
       t.integer  "retries",          :default => 0, :null => false
       t.datetime "last_retry_at"
       t.string   "last_error"
+      t.boolean  "locked",           :default => false, :null => false
+      t.datetime "locked_at"
       t.datetime "created_at"
       t.datetime "updated_at"
       t.string   "key"
     end
     add_index "queued_mails", ["mail_campaign_id", "to"], :name => "index_queued_mails_on_mail_campain_id_and_to", :unique => true
-    add_index "queued_mails", ["retries"], :name => "index_queued_mails_on_retries"
+    add_index "queued_mails", ["retries", "locked"], :name => "index_queued_mails_on_retries_and_locked"
+    add_index "queued_mails", ["locked", "retries", "id"], :name => "index_queued_mails_on_locked_retries_and_id"
+    add_index "queued_mails", ["locked", "locked_at"], :name => "index_queued_mails_on_locked_and_locked_at"
 
     create_table "finished_mails", :force => true do |t|
       t.integer  "mail_campaign_id"
