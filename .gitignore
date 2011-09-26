@@ -3,3 +3,4 @@ pkg/*
 .bundle
 *.tmproj
 .DS_Store
+*.sublime-*
