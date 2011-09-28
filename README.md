@@ -14,7 +14,7 @@ For Rails 3 projects, update your Gemfile and add:
 
 	gem 'smailer'
 
-Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add `config.gem 'smailer'` to your `environment.rb` file and then run `rake gems:install` in your project's root.
+Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add `config.gem 'smailer'` to your `environment.rb` file and then run `rake gems:install` in your project's root. Also, if you use Rails 2.3.5, you may need to explicitly require a newer version of the `mail` gem, because `mail 2.2.x` has a dependency on ActiveSupport 2.3.6. For example, you can add this to your Rails 2.3.5's `environment.rb`: `config.gem 'mail', :version => '~> 2.3' # we need 2.3.x which does not depend on ActiveSupport 2.3.6`
 
 ### Generate and run the migration
 
