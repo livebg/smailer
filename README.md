@@ -107,7 +107,7 @@ The emails which have been placed in the queue previously, have to be sent out a
 	namespace :smailer do
 	  desc 'Send out a batch of queued emails.'
 	  task :send_batch => :environment do
-	    result = Smailer::Tasks::Send.execute
+	    result = Smailer::Tasks::Send.execute :return_path_domain => 'bounces.mydomain.com', :verp => true
 	    result.each do |queue_item, status|
 	      puts "Sending #{queue_item.to}: #{status}"
 	    end
@@ -115,6 +115,10 @@ The emails which have been placed in the queue previously, have to be sent out a
 	end
 
 This task can be executed via `RAILS_ENV=production bundle exec rake smailer:send_batch` (provided you are running it on your production servers).
+
+Notice that we pass a `:return_path_domain` option to `Send.execute`. This domain will be used to construct a dynamic `Return-Path:` address, which you could later use in order to process bounced mails and connect the bounce with a concrete mail campaign and sender's email address. The generated return path will have the following format: `"bounces-SOMEKEY@bounces.mydomain.com"`, where `SOMEKEY` will be the same as the `key` field in the corresponding `FinishedMail` record and will uniquely identify this record, and `bounces.mydomain.com` is what you passed to `:return_path_domain`.
+
+Dynamic return path is generated only when `:return_path_domain` is specified and `:verp` is not false. If you omit the `:verp` option and just pass `:return_path_domain`, `Send.execute` will still use VERP and generate dynamic return path addresses.
 
 ## TODO
 
