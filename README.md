@@ -8,17 +8,19 @@ It is intended to be used within a Rails project. It has been tested with Rails 
 
 ## Install
 
-### Install the Gem
+### Install the gem
 
 For Rails 3 projects, add the following to your `Gemfile`:
 
 	gem 'smailer'
 
-Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add `config.gem 'smailer'` to your `environment.rb` file and then run `rake gems:install` in your project's root. Also, if you use Rails 2.3.5, you may need to explicitly require a newer version of the `mail` gem, because `mail 2.2.x` has a dependency on ActiveSupport 2.3.6. For example, you can add this to your Rails 2.3.5's `environment.rb`: `config.gem 'mail', :version => '~> 2.3' # we need 2.3.x which does not depend on ActiveSupport 2.3.6`
+Then run `bundle install`. For Rails 2.x projects which do not use Bundler, add `config.gem 'smailer'` to your `environment.rb` file and then run `rake gems:install` in your project's root. Also, if you use Rails 2.3.5, you may need to explicitly require a newer version of the `mail` gem, because `mail 2.2.x` has a dependency on ActiveSupport 2.3.6. For example, you can add this to your Rails 2.3.5's `environment.rb`:
+
+	config.gem 'mail', :version => '~> 2.3' # we need 2.3.x which does not depend on ActiveSupport 2.3.6
 
 ### Generate and run the migration
 
-To create the tables needed by Smailer to operate, run the `smailer:migration` generator after installing the Gem. For Rails 3, you can do this:
+To create the tables needed by Smailer to operate, run the `smailer:migration` generator after installing the gem. For Rails 3, you can do this:
 
 	rails g smailer:migration && bundle exec rake db:migrate
 
@@ -41,11 +43,11 @@ Sending out newsletters consists of a couple of steps:
 * At least one record should exist in `Smailer::Models::MailingList`. This record can then be used for unsubscribe requests if your system supports multiple newsletter types.
 * For each newsletter issue you intend to send, you should create a `Smailer::Models::MailCampaign` record. This record contains the subject and body contents of the newsletter you will be sending out.
 * Given a list of active subscribers your application provides, you then enqueue mails to be send via the `MailCampaign#queued_mails` list (see the example below).
-* Finally, you should call `Smailer::Tasks::Send.execute` repeatedly to process and send-out the enqueued emails.
+* Finally, you should call `Smailer::Tasks::Send.execute` repeatedly to process and send-out the enqueued emails, probably via a Cron daemon.
 
 ### Issuing a newsletter
 
-This is an example how you could proceed with creating and issuing a newsletter:
+Here is an example how you could proceed with creating and issuing a newsletter:
 
 	# locate the mailing list we'll be sending to
 	list = Smailer::Models::MailingList.first
@@ -75,7 +77,7 @@ This is an example how you could proceed with creating and issuing a newsletter:
 
 ### Managing unsubscriptions
 
-There are a few unsubscription methods supported. The most common one is probably via a unsubscribe link in the email. 
+Among the few unsubscription methods supported, probably the most widely used one is unsubscription via a unsubscribe link in the email. 
 
 In order to help you with implementing it, Smailer provides you with some interpolations you can use in the email's body:
 
@@ -89,9 +91,9 @@ In order to help you with implementing it, Smailer provides you with some interp
 Here is an example text you could include in the HTML version of your email to show a unsubscribe link (this also demonstrates how interpolation in the email's body works):
 
 	<p>If you wish to be removed from our mailinglist go here: <a href="http://yourcomain.com/unsubscribe/%{email_key}">http://yourcomain.com/unsubscribe/%{email_key}</a>.</p>
-	<p>You are subscribed to the list with the email address: %{escaped_email}</p>
+	<p>You are subscribed to the list with the following email address: %{escaped_email}</p>
 
-You have to implement a route in your Rails app to handle '/unsubscribe/:email_key'. For example, it could go to `UnsubscribeController#unsubscribe`, which you could implement like so:
+In this case, you will have to add a route in your Rails app to handle URLs like `'/unsubscribe/:email_key'`. For example, it could lead to `UnsubscribeController#unsubscribe`, which you could implement like so:
 
 	@email = Smailer::Models::MailKey.find_by_key(params[:email_key]).try(:email)
 	raise ActiveRecord::RecordNotFound unless @email
@@ -101,7 +103,7 @@ You have to implement a route in your Rails app to handle '/unsubscribe/:email_k
 
 ### Sending mails
 
-The emails which have been placed in the queue previously, have to be sent out at some point. This can be done for example with a Rake task which is run periodically via a Cron daemon. Here's an example Rake task:
+The emails which have already been placed in the send queue, have to be sent out at some point. This can be done for example with a Rake task which is run periodically via a Cron daemon. Here's an example Rake task you could use:
 
 	# lib/tasks/smailer.rake
 	namespace :smailer do
@@ -122,6 +124,7 @@ Dynamic return path is generated only when `:return_path_domain` is specified an
 
 ## TODO
 
+* Bounce processing
 * Tests, tests, tests
 
 ## Contribution
