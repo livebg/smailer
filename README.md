@@ -10,7 +10,7 @@ It is intended to be used within a Rails project. It has been tested with Rails 
 
 ### Install the Gem
 
-For Rails 3 projects, update your Gemfile and add:
+For Rails 3 projects, add the following to your `Gemfile`:
 
 	gem 'smailer'
 
