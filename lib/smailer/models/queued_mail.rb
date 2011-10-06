@@ -38,6 +38,8 @@ module Smailer
       end
 
       def interpolate(text)
+        return text if text.nil?
+
         {
           :email            => to,
           :escaped_email    => lambda { ERB::Util.h(to) },
