@@ -9,7 +9,7 @@ module Smailer
 
       belongs_to :mailing_list
       has_many :queued_mails, :dependent => :destroy
-      has_many :finished_mails
+      has_many :finished_mails, :dependent => :destroy
 
       validates_presence_of :mailing_list_id, :from
       validates_numericality_of :mailing_list_id, :unsubscribe_methods, :only_integer => true, :allow_nil => true
