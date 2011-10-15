@@ -1,3 +1,7 @@
 module Smailer
-  VERSION = "0.4.3"
+  MAJOR = 0
+  MINOR = 4
+  PATCH = 4
+
+  VERSION = [MAJOR, MINOR, PATCH].join('.')
 end
