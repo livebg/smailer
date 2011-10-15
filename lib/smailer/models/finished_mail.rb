@@ -53,7 +53,7 @@ module Smailer
       protected
 
       def update_mail_campaign_counts
-        if opened_changed?
+        if opened_changed? && mail_campaign
           mail_campaign.opened_mails_count += opened_was ? -1 : 1
           Compatibility.save_without_validation mail_campaign
         end
