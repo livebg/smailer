@@ -55,7 +55,7 @@ module Smailer
           # compute the VERP'd return_path if requested
           # or fall-back to a global return-path if not
           item_return_path = if options[:verp]
-             "bounces-#{queue_item.key}@#{options[:return_path_domain]}"
+             "#{Smailer::BOUNCES_PREFIX}#{queue_item.key}@#{options[:return_path_domain]}"
           else
             options[:return_path]
           end

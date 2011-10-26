@@ -1,3 +1,4 @@
+require 'smailer/constants'
 require 'smailer/version'
 
 module Smailer
