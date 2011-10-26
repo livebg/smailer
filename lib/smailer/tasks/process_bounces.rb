@@ -87,7 +87,7 @@ module Smailer
               end
             end
 
-              m.delete if options[:delete_unprocessed_bounces] && !processed
+              # m.delete if options[:delete_unprocessed_bounces] && !processed
           end
         end
 
@@ -104,7 +104,7 @@ module Smailer
         @@unsubscribed[recipient] = true
 
         bounces_for(recipient).each do |pop_mail|
-          pop_mail.delete
+          # pop_mail.delete
         end
 
         @@emails_bounces[recipient] = nil
@@ -134,7 +134,7 @@ module Smailer
         to  = mail.to.select { |address| address.start_with? Smailer::BOUNCES_PREFIX }.first.to_s
         key = to.split('@').first[Smailer::BOUNCES_PREFIX.size..-1]
 
-        @@keys_messages[key] ||= FinishedMail.where(:key => key).first
+        @@keys_messages[key] ||= Smailer::Models::FinishedMail.where(:key => key).first
       end
     end
   end
