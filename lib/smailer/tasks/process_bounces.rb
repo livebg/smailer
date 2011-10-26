@@ -11,7 +11,7 @@ module Smailer
 
       # You need to provide at least a :server, :username and a :password options to execute().
       # These will represent the POP3 connection details to the bounce mailbox which will be processed.
-      # Also consider providing a concrete implementation to the :subscribed_check option, so that
+      # Also consider providing a concrete implementation to the :subscribed_checker option, so that
       # bounces for unknown or already-unsubscribed emails do not remain clogging-up the mailbox
       # Example usage:
       #
@@ -19,7 +19,7 @@ module Smailer
       #   :server           => 'bounces.example.org',
       #   :username         => 'noreply@bounces.example.org',
       #   :password         => 'somesecret',
-      #   :subscribed_check => lambda { |recipient| Subscribers.subscribed.where(:email => recipient).first.present? },
+      #   :subscribed_checker => lambda { |recipient| Subscribers.subscribed.where(:email => recipient).first.present? },
       # }) do |unsubscribe_details|
       #   Subscribers.where(:email => unsubscribe_details[:recipient]).destroy
       # end
@@ -27,7 +27,7 @@ module Smailer
         report  = []
         options = {
           :port => 110,
-          :subscribed_check => lambda { true },
+          :subscribed_checker => lambda { true },
           :bounce_counts_per_type_to_unsubscribe => {
             1   => ['5.1.1', '5.1.2', '5.1.3', '5.1.6', '5.1.8', '5.7.1'],
             3   => ['5.2.1', '5.1.0'],
@@ -64,7 +64,7 @@ module Smailer
               if original_email
                 recipient = original_email.to
 
-                if !unsubscribed?(recipient) && options[:subscribed_check].call(recipient)
+                if !unsubscribed?(recipient) && options[:subscribed_checker].call(recipient)
                   processed = true
                   register_bounce bounce, m
 
