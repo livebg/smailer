@@ -2,7 +2,7 @@
 
 ## Intro
 
-This project is a simple mailer for newsletters, which implements simple queue processing, basic campaign management and has some unsubscribe support.
+This project is a simple mailer for newsletters, which implements simple queue processing, basic campaign management, [VERP support](http://en.wikipedia.org/wiki/Variable_envelope_return_path), bounce processing and auto-unsubscribe of invalid emails and aslo assists you in implementing unsubscribe links in the email messages.
 
 It is intended to be used within a Rails project. It has been tested with Rails 3.0.x, Rails 3.1.0 and Rails 2.3.5.
 
@@ -120,11 +120,41 @@ This task can be executed via `RAILS_ENV=production bundle exec rake smailer:sen
 
 Notice that we pass a `:return_path_domain` option to `Send.execute`. This domain will be used to construct a dynamic `Return-Path:` address, which you could later use in order to process bounced mails and connect the bounce with a concrete mail campaign and sender's email address. The generated return path will have the following format: `"bounces-SOMEKEY@bounces.mydomain.com"`, where `SOMEKEY` will be the same as the `key` field in the corresponding `FinishedMail` record and will uniquely identify this record, and `bounces.mydomain.com` is what you passed to `:return_path_domain`.
 
-Dynamic return path is generated only when `:return_path_domain` is specified and `:verp` is not false. If you omit the `:verp` option and just pass `:return_path_domain`, `Send.execute` will still use VERP and generate dynamic return path addresses.
+Dynamic return path is generated only when `:return_path_domain` is specified and `:verp` is not false. If you omit the `:verp` option and just pass `:return_path_domain`, `Send.execute` will still use [VERP](http://en.wikipedia.org/wiki/Variable_envelope_return_path) and generate dynamic return path addresses.
+
+### Processing bounces and auto-unsubscribing bad emails
+
+If you use the [VERP support](http://en.wikipedia.org/wiki/Variable_envelope_return_path) Smailer provides when sending your messages, you can easily implement auto-unsubscribe for invalid email addressess or for addresses which bounce too much.
+
+This can be done via a simple cron task, which runs daily (or whatever) on your servers.
+
+Suppose you manage your site's newsletter subscriptions via a `Subscription` model, which has two boolean flags -- `subscribed` and `confirmed` and also an `email` field. You could implement a simple Rake task to be run via a cron daemon this way:
+
+	task :process_bounces => :environment do
+	  subscribed_checker = lambda do |recipient|
+	    Subscription.confirmed.subscribed.where(:email => recipient).first.present?
+	  end
+
+	  Smailer::Tasks::ProcessBounces.execute({
+	    :server             => 'bounces.mydomain.com',
+	    :username           => 'no-reply@bounces.mydomain.com',
+	    :password           => 'mailbox-password',
+	    :subscribed_checker => subscribed_checker,
+	  }) do |unsubscribe_details|
+	    subscription = Subscription.confirmed.subscribed.where(:email => unsubscribe_details[:recipient]).first
+	
+	    if subscription
+	      subscription.subscribed = false
+	      subscription.unsubscribe_reason = 'Automatic, due to bounces'
+	      subscription.save!
+	    end
+	  end
+	end
+
+For more info and also if you'd like to adjust the unsubscribe rules, take a look at the `ProcessBounces.execute` method and its options. It's located in `lib/smailer/tasks/process_bounces.rb`. A few extra options are available, such as `:logger` callbacks (which defaults to `puts`), default action for unprocessed bounces, etc.
 
 ## TODO
 
-* Bounce processing
 * Tests, tests, tests
 
 ## Contribution
