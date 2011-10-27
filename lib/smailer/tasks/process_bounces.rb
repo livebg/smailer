@@ -68,7 +68,7 @@ module Smailer
 
                   if !unsubscribed?(recipient) && options[:subscribed_checker].call(recipient)
                     processed = true
-                    register_bounce bounce, m
+                    register_bounce recipient, bounce, m
 
                     bounce_count_per_type = bounce_count_for recipient, bounce.code
                     total_bounce_count    = bounce_count_for recipient
@@ -128,7 +128,7 @@ module Smailer
           @@emails_bounces[recipient] = nil
         end
 
-        def register_bounce(bounce, pop_mail)
+        def register_bounce(recipient, bounce, pop_mail)
           increment_bounce_count_for recipient, bounce.code
           bounces_for(recipient) << pop_mail
         end
