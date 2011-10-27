@@ -149,7 +149,7 @@ module Smailer
         end
 
         def sent_message_from_bounce(mail)
-          to  = mail.to.select { |address| address.start_with? Smailer::BOUNCES_PREFIX }.first.to_s
+          to  = mail.to.select { |address| address.to_s.start_with? Smailer::BOUNCES_PREFIX }.first.to_s
           key = to.split('@').first[Smailer::BOUNCES_PREFIX.size..-1]
 
           @@keys_messages[key] ||= Smailer::Models::FinishedMail.where(:key => key).first
