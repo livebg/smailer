@@ -100,8 +100,6 @@ module Smailer
           connect_to_mailbox(options) { |pop| logger.call "Messages left in the mailbox: #{pop.mails.size}" }
         end
 
-        private
-
         def test_mode?
           @@test_mode
         end
@@ -109,6 +107,8 @@ module Smailer
         def test_mode=(mode)
           @@test_mode = mode
         end
+
+        private
 
         def connect_to_mailbox(options, &block)
           Net::POP3.start(options[:server], options[:port], options[:username], options[:password], &block)
