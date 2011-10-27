@@ -154,7 +154,7 @@ module Smailer
 
           key = to.strip.split('@').first[Smailer::BOUNCES_PREFIX.size..-1]
 
-          @@keys_messages[key] ||= Smailer::Compatibility.rails_3?
+          @@keys_messages[key] ||= if Smailer::Compatibility.rails_3?
             Smailer::Models::FinishedMail.where(:key => key).first
           else
             Smailer::Models::FinishedMail.first(:conditions => {:key => key})
