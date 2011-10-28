@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = "smailer"
 
   s.add_development_dependency "bundler", ">= 1.0.0"
-  s.add_runtime_dependency "mail", "~> 2.2"
+  s.add_runtime_dependency "mail", "~> 2.3"
   s.add_runtime_dependency "bounce_email", "~> 0.2"
 
   s.files        = `git ls-files`.split("\n")
