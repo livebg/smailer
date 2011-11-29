@@ -32,7 +32,10 @@ module Smailer
       def self.add(queued_mail, status = Statuses::SENT)
         finished = self.new
 
-        [:mail_campaign_id, :key, :from, :to, :subject, :body_html, :body_text, :retries, :last_retry_at, :last_error].each do |field|
+        fields_to_copy = [:mail_campaign_id, :key, :from, :to, :subject, :retries, :last_retry_at, :last_error]
+        fields_to_copy += [:body_html, :body_text] if Smailer::Models::Property.get_boolean('finished_mails.preserve_body')
+
+        fields_to_copy.each do |field|
           finished.send("#{field}=", queued_mail.send(field))
         end
 

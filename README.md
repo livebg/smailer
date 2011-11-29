@@ -33,6 +33,7 @@ Since the plugin has been designed to be managed via an admin UI, its settings a
 	Smailer::Models::Property.create! :name => 'queue.max_retries', :value => '0', :notes => '0 = unlimited.'
 	Smailer::Models::Property.create! :name => 'queue.max_lifetime', :value => '172800', :notes => 'In seconds; 0 = unlimited.'
 	Smailer::Models::Property.create! :name => 'queue.batch_size', :value => '100', :notes => 'Emails to send per run.'
+	Smailer::Models::Property.create! :name => 'finished_mails.preserve_body', :value => 'false', :notes => 'If this one is set to true, it will take more space in the DB. Use with caution and for debugging purposes only.'
 
 These properties and values are also the defaults.
 
