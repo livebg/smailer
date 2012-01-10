@@ -6,6 +6,8 @@ This project is a simple mailer for newsletters, which implements simple queue p
 
 It is intended to be used within a Rails project. It has been tested with Rails 3.0.x, Rails 3.1.0 and Rails 2.3.5.
 
+Note: for Rails 3.0.x, you will probably need to use Smailer 0.5.x, because of a version incompatibility with the `mail` Gem.
+
 ## Install
 
 ### Install the gem
