@@ -31,10 +31,11 @@ module Smailer
         Smailer::Models::QueuedMail.update_all({:locked => false}, ['locked = ? AND locked_at <= ?', true, 1.hour.ago.utc])
 
         # load the queue items to process
+        queue_sort_order = 'retries ASC, id ASC'
         items_to_process = if Compatibility.rails_3?
-          Smailer::Models::QueuedMail.where(:locked => false).order(:retries.asc, :id.asc).limit(batch_size)
+          Smailer::Models::QueuedMail.where(:locked => false).order(queue_sort_order).limit(batch_size)
         else
-          Smailer::Models::QueuedMail.all(:conditions => {:locked => false}, :order => 'retries ASC, id ASC', :limit => batch_size)
+          Smailer::Models::QueuedMail.all(:conditions => {:locked => false}, :order => queue_sort_order, :limit => batch_size)
         end
 
         # lock the queue items
