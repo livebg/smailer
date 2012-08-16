@@ -2,7 +2,7 @@
 
 ## Intro
 
-This project is a simple mailer for newsletters, which implements simple queue processing, basic campaign management, [VERP support](http://en.wikipedia.org/wiki/Variable_envelope_return_path), bounce processing and auto-unsubscribe of invalid emails and aslo assists you in implementing unsubscribe links in the email messages.
+This project is a simple mailer for newsletters, which implements simple queue processing, basic campaign management, [VERP support](http://en.wikipedia.org/wiki/Variable_envelope_return_path), bounce processing and auto-unsubscribe of invalid emails and also assists you in implementing unsubscribe links in the email messages.
 
 It is intended to be used within a Rails project. It has been tested with Rails 3.0.x, Rails 3.1.0 and Rails 2.3.5.
 
