@@ -10,7 +10,6 @@ module Smailer
       unless Smailer::Compatibility.rails_4?
         attr_accessible :name
       end
-
     end
   end
 end

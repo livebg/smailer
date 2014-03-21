@@ -1,7 +1,7 @@
 module Smailer
   module Models
     class Property < ActiveRecord::Base
-      if Smailer::Compatibility.rails_4?
+      if Smailer::Compatibility.rails_3_or_4?
         self.table_name = 'smailer_properties'
       else
         set_table_name 'smailer_properties'
