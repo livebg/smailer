@@ -11,7 +11,7 @@ module Smailer
           raise "VERP is enabled, but a :return_path_domain option has not been specified or is blank."
         end
 
-        rails_delivery_method = if Compatibility.rails_3?
+        rails_delivery_method = if Smailer::Compatibility.rails_3_or_4?
           method = Rails.configuration.action_mailer.delivery_method
           [method, Rails.configuration.action_mailer.send("#{method}_settings")]
         else
@@ -29,18 +29,29 @@ module Smailer
         results = []
 
         # clean up any old locked items
+        if Smailer::Compatibility.rails_4?
+          Smailer::Models::QueuedMail.
+            where('locked = ? AND locked_at <= ?', true, 1.hour.ago.utc).
+            update_all(:locked => false)
+        else
         Smailer::Models::QueuedMail.update_all({:locked => false}, ['locked = ? AND locked_at <= ?', true, 1.hour.ago.utc])
+        end
 
         # load the queue items to process
         queue_sort_order = 'retries ASC, id ASC'
-        items_to_process = if Compatibility.rails_3?
+        items_to_process = if Smailer::Compatibility.rails_3_or_4?
           Smailer::Models::QueuedMail.where(:locked => false).order(queue_sort_order).limit(batch_size)
         else
           Smailer::Models::QueuedMail.all(:conditions => {:locked => false}, :order => queue_sort_order, :limit => batch_size)
         end
 
         # lock the queue items
+        if Smailer::Compatibility.rails_4?
+          Smailer::Models::QueuedMail.where(:id => items_to_process.map(&:id)).
+            update_all(:locked => true, :locked_at => Time.now.utc)
+        else
         Smailer::Models::QueuedMail.update_all({:locked => true, :locked_at => Time.now.utc}, {:id => items_to_process.map(&:id)})
+        end
 
         items_to_process.each do |queue_item|
           # try to send the email
