@@ -30,7 +30,7 @@ module Smailer
 
         # clean up any old locked items
         expired_locks_condition = ['locked = ? AND locked_at <= ?', true, 1.hour.ago.utc]
-        if Smailer::Compatibility.rails_4?
+        if Smailer::Compatibility.rails_3_or_4?
           Smailer::Models::QueuedMail.where(expired_locks_condition).update_all(:locked => false)
         else
           Smailer::Models::QueuedMail.update_all({:locked => false}, expired_locks_condition)
@@ -47,7 +47,7 @@ module Smailer
         # lock the queue items
         lock_condition = {:id => items_to_process.map(&:id)}
         lock_update = {:locked => true, :locked_at => Time.now.utc}
-        if Smailer::Compatibility.rails_4?
+        if Smailer::Compatibility.rails_3_or_4?
           Smailer::Models::QueuedMail.where(lock_condition).update_all(lock_update)
         else
           Smailer::Models::QueuedMail.update_all(lock_update, lock_condition)
