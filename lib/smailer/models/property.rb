@@ -1,12 +1,18 @@
 module Smailer
   module Models
     class Property < ActiveRecord::Base
-      set_table_name 'smailer_properties'
+      if Smailer::Compatibility.rails_3_or_4?
+        self.table_name = 'smailer_properties'
+      else
+        set_table_name 'smailer_properties'
+      end
 
       validates_presence_of :name
       validates_uniqueness_of :name
 
-      attr_accessible :name, :value, :notes
+      unless Smailer::Compatibility.rails_4?
+        attr_accessible :name, :value, :notes
+      end
 
       @@cache_created_at = Time.now
 

@@ -7,7 +7,9 @@ module Smailer
       validates_uniqueness_of :name
       validates_length_of :name, :maximum => 255
 
-      attr_accessible :name
+      unless Smailer::Compatibility.rails_4?
+        attr_accessible :name
+      end
     end
   end
 end

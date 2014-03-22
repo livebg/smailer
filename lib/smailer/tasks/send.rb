@@ -11,7 +11,7 @@ module Smailer
           raise "VERP is enabled, but a :return_path_domain option has not been specified or is blank."
         end
 
-        rails_delivery_method = if Compatibility.rails_3?
+        rails_delivery_method = if Smailer::Compatibility.rails_3_or_4?
           method = Rails.configuration.action_mailer.delivery_method
           [method, Rails.configuration.action_mailer.send("#{method}_settings")]
         else
@@ -29,18 +29,29 @@ module Smailer
         results = []
 
         # clean up any old locked items
-        Smailer::Models::QueuedMail.update_all({:locked => false}, ['locked = ? AND locked_at <= ?', true, 1.hour.ago.utc])
+        expired_locks_condition = ['locked = ? AND locked_at <= ?', true, 1.hour.ago.utc]
+        if Smailer::Compatibility.rails_4?
+          Smailer::Models::QueuedMail.where(expired_locks_condition).update_all(:locked => false)
+        else
+          Smailer::Models::QueuedMail.update_all({:locked => false}, expired_locks_condition)
+        end
 
         # load the queue items to process
         queue_sort_order = 'retries ASC, id ASC'
-        items_to_process = if Compatibility.rails_3?
+        items_to_process = if Smailer::Compatibility.rails_3_or_4?
           Smailer::Models::QueuedMail.where(:locked => false).order(queue_sort_order).limit(batch_size)
         else
           Smailer::Models::QueuedMail.all(:conditions => {:locked => false}, :order => queue_sort_order, :limit => batch_size)
         end
 
         # lock the queue items
-        Smailer::Models::QueuedMail.update_all({:locked => true, :locked_at => Time.now.utc}, {:id => items_to_process.map(&:id)})
+        lock_condition = {:id => items_to_process.map(&:id)}
+        lock_update = {:locked => true, :locked_at => Time.now.utc}
+        if Smailer::Compatibility.rails_4?
+          Smailer::Models::QueuedMail.where(lock_condition).update_all(lock_update)
+        else
+          Smailer::Models::QueuedMail.update_all(lock_update, lock_condition)
+        end
 
         items_to_process.each do |queue_item|
           # try to send the email

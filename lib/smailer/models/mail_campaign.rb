@@ -15,7 +15,9 @@ module Smailer
       validates_numericality_of :mailing_list_id, :unsubscribe_methods, :only_integer => true, :allow_nil => true
       validates_length_of :from, :subject, :maximum => 255, :allow_nil => true
 
-      attr_accessible :mailing_list_id, :from, :subject, :body_html, :body_text
+      unless Smailer::Compatibility.rails_4?
+        attr_accessible :mailing_list_id, :from, :subject, :body_html, :body_text
+      end
 
       def add_unsubscribe_method(method)
         self.unsubscribe_methods = (self.unsubscribe_methods || 0) | method
