@@ -37,6 +37,15 @@ class CreateSmailerTables < ActiveRecord::Migration
     add_index "queued_mails", ["locked", "retries", "id"], :name => "index_queued_mails_on_locked_retries_and_id"
     add_index "queued_mails", ["locked", "locked_at"], :name => "index_queued_mails_on_locked_and_locked_at"
 
+    create_table "mail_campaign_attachments", :force => true do |t|
+      t.integer "mail_campaign_id", :null => false
+      t.string "filename", :null => false
+      t.string "path", :limit => 2048
+      t.datetime "created_at"
+      t.datetime "updated_at"
+    end
+    add_index "mail_campaign_attachments", "mail_campaign_id"
+
     create_table "finished_mails", :force => true do |t|
       t.integer  "mail_campaign_id"
       t.string   "from"
@@ -79,23 +88,11 @@ class CreateSmailerTables < ActiveRecord::Migration
 
   def self.down
     drop_table :smailer_properties
-
-    remove_index :mail_keys, :name => "index_mail_keys_on_email"
-    remove_index :mail_keys, :name => "index_mail_keys_on_email"
     drop_table :mail_keys
-
-    remove_index :finished_mails, :name => "index_finished_mails_on_key"
-    remove_index :finished_mails, :name => "index_finished_mails_on_mail_campain_id_and_status"
-    remove_index :finished_mails, :name => "index_finished_mails_on_to_and_mail_campaign_id"
     drop_table :finished_mails
-
-    remove_index :queued_mails, :name => "index_queued_mails_on_mail_campain_id_and_to"
-    remove_index :queued_mails, :name => "index_queued_mails_on_retries"
     drop_table :queued_mails
-
-    remove_index :mail_campaigns, :name => "index_mail_campaigns_on_mailing_list_id"
+    drop_table :mail_campaign_attachments
     drop_table :mail_campaigns
-
     drop_table :mailing_lists
   end
 end

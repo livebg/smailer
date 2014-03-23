@@ -53,12 +53,21 @@ module Smailer
           Smailer::Models::QueuedMail.update_all(lock_update, lock_condition)
         end
 
+        # map of attachment ID to contents - so we don't keep opening files
+        # or URLs
+        cached_attachments = {}
+
         items_to_process.each do |queue_item|
           # try to send the email
           mail = Mail.new do
             from    queue_item.from
             to      queue_item.to
             subject queue_item.subject
+            queue_item.mail_campaign.attachments.each do |attachment|
+              cached_attachments[attachment.id] ||= attachment.body
+              add_file :filename => attachment.filename,
+                       :content => cached_attachments[attachment.id]
+            end
 
             text_part { body queue_item.body_text }
             html_part { body queue_item.body_html; content_type 'text/html; charset=UTF-8' }
