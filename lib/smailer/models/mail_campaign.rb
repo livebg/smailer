@@ -10,6 +10,8 @@ module Smailer
       belongs_to :mailing_list
       has_many :queued_mails, :dependent => :destroy
       has_many :finished_mails, :dependent => :destroy
+      has_many :attachments,
+               :class_name => '::Smailer::Models::MailCampaignAttachment'
 
       validates_presence_of :mailing_list_id, :from
       validates_numericality_of :mailing_list_id, :unsubscribe_methods, :only_integer => true, :allow_nil => true
@@ -46,6 +48,10 @@ module Smailer
       def hit_rate
         return nil if sent_mails_count == 0
         opened_mails_count.to_f / sent_mails_count
+      end
+
+      def add_attachment(filename, path)
+        self.attachments.create!(:filename => filename, :path => path)
       end
 
       def self.unsubscribe_methods
