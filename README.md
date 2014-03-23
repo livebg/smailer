@@ -80,6 +80,11 @@ Here is an example how you could proceed with creating and issuing a newsletter:
 	  campaign.queued_mails.create! :to => subscriber
 	end
 
+### Attachments
+
+You can have zero or more attachments to any mail campaign. As demonstrated in the example above, you add them to the campain using the `MailCampaign#add_attachment(file_name, url_or_path)` method.
+
+Any attached files will be referenced at the moment of sending and must be reachable and readable by the send task. Currently, `open-uri` is used to fetch the content of the path or URI. The maximum length of the path/URI field is 2048 symbols.
 
 ### Managing unsubscriptions
 
