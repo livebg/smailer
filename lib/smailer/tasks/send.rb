@@ -48,6 +48,7 @@ module Smailer
         # map of attachment ID to contents - so we don't keep opening files
         # or URLs
         cached_attachments = {}
+        finished_mails_counts = Hash.new(0)
 
         items_to_process.each do |queue_item|
           # try to send the email
@@ -99,14 +100,20 @@ module Smailer
 
             if retries_exceeded || too_old
               # the message has expired; move to finished_mails
-              Smailer::Models::FinishedMail.add(queue_item, Smailer::Models::FinishedMail::Statuses::FAILED)
+              Smailer::Models::FinishedMail.add(queue_item, Smailer::Models::FinishedMail::Statuses::FAILED, false)
+              finished_mails_counts[queue_item.mail_campaign.id] += 1
             end
             results.push [queue_item, :failed]
           else
             # great job, message sent
-            Smailer::Models::FinishedMail.add(queue_item, Smailer::Models::FinishedMail::Statuses::SENT)
+            Smailer::Models::FinishedMail.add(queue_item, Smailer::Models::FinishedMail::Statuses::SENT, false)
+            finished_mails_counts[queue_item.mail_campaign.id] += 1
             results.push [queue_item, :sent]
           end
+        end
+
+        finished_mails_counts.each do |mail_campaign_id, finished_mails_for_campaign|
+          Smailer::Models::MailCampaign.update_counters mail_campaign_id, :sent_mails_count => finished_mails_for_campaign
         end
 
         results

@@ -29,7 +29,7 @@ module Smailer
         Compatibility.save_without_validation self if changed?
       end
 
-      def self.add(queued_mail, status = Statuses::SENT)
+      def self.add(queued_mail, status = Statuses::SENT, update_sent_mails_count = true)
         finished = self.new
 
         fields_to_copy = [:mail_campaign_id, :key, :from, :to, :subject, :retries, :last_retry_at, :last_error]
@@ -45,7 +45,7 @@ module Smailer
         finished.save!
         queued_mail.destroy
 
-        if finished.mail_campaign
+        if update_sent_mails_count && finished.mail_campaign
           finished.mail_campaign.sent_mails_count += 1
           Compatibility.save_without_validation finished.mail_campaign
         end
