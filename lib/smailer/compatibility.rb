@@ -17,5 +17,13 @@ module Smailer
     def save_without_validation(object)
       rails_3_or_4? ? object.save(:validate => false) : object.save(false)
     end
+
+    def update_all(scope, fields, conditions)
+      if rails_3_or_4?
+        scope.where(conditions).update_all(fields)
+      else
+        scope.update_all(fields, conditions)
+      end
+    end
   end
 end
