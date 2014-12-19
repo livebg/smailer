@@ -11,15 +11,9 @@ module Smailer
           raise "VERP is enabled, but a :return_path_domain option has not been specified or is blank."
         end
 
-        rails_delivery_method = if Smailer::Compatibility.rails_3_or_4?
-          method = Rails.configuration.action_mailer.delivery_method
-          [method, Rails.configuration.action_mailer.send("#{method}_settings")]
-        else
-          [ActionMailer::Base.delivery_method]
-        end
-
         Mail.defaults do
-          delivery_method *rails_delivery_method
+          method = Rails.configuration.action_mailer.delivery_method
+          delivery_method method, Rails.configuration.action_mailer.send("#{method}_settings")
         end
 
         batch_size   = (Smailer::Models::Property.get('queue.batch_size') || 100).to_i
