@@ -10,24 +10,24 @@ module Smailer
       belongs_to :mailing_list
       has_many :queued_mails, :dependent => :destroy
       has_many :finished_mails, :dependent => :destroy
-      has_many :attachments,
-               :class_name => '::Smailer::Models::MailCampaignAttachment'
 
       validates_presence_of :mailing_list_id, :from
       validates_numericality_of :mailing_list_id, :unsubscribe_methods, :only_integer => true, :allow_nil => true
       validates_length_of :from, :subject, :maximum => 255, :allow_nil => true
 
-      unless Smailer::Compatibility.rails_4?
-        attr_accessible :mailing_list_id, :from, :subject, :body_html, :body_text
+      attr_accessible :mailing_list_id, :from, :subject, :body_html, :body_text
+
+      def add_unsubscribe_method(method_specification)
+        unsubscribe_methods_list_from(method_specification).each do |method|
+          self.unsubscribe_methods = (self.unsubscribe_methods || 0) | method
+        end
       end
 
-      def add_unsubscribe_method(method)
-        self.unsubscribe_methods = (self.unsubscribe_methods || 0) | method
-      end
-
-      def remove_unsubscribe_method(method)
-        if has_unsubscribe_method?(method)
-          self.unsubscribe_methods = (self.unsubscribe_methods || 0) ^ method
+      def remove_unsubscribe_method(method_specification)
+        unsubscribe_methods_list_from(method_specification).each do |method|
+          if has_unsubscribe_method?(method)
+            self.unsubscribe_methods = (self.unsubscribe_methods || 0) ^ method
+          end
         end
       end
 
@@ -50,10 +50,6 @@ module Smailer
         opened_mails_count.to_f / sent_mails_count
       end
 
-      def add_attachment(filename, path)
-        self.attachments.create!(:filename => filename, :path => path)
-      end
-
       def self.unsubscribe_methods
         methods = {}
         UnsubscribeMethods.constants.map do |method_name|
@@ -61,6 +57,16 @@ module Smailer
         end
 
         methods
+      end
+
+      private
+
+      def unsubscribe_methods_list_from(method_specification)
+        if method_specification == :all
+          self.class.unsubscribe_methods.keys
+        else
+          [method_specification]
+        end
       end
     end
   end
