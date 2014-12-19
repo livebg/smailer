@@ -13,7 +13,7 @@ module Smailer
 
         Mail.defaults do
           method = Rails.configuration.action_mailer.delivery_method
-          delivery_method method, Rails.configuration.action_mailer.send("#{method}_settings")
+          delivery_method method, Rails.configuration.action_mailer.send("#{method}_settings") || {}
         end
 
         batch_size   = (Smailer::Models::Property.get('queue.batch_size') || 100).to_i
