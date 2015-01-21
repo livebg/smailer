@@ -1,5 +1,5 @@
 require "rails/generators/active_record"
-require_relative '../../smailer'
+require 'smailer'
 
 module Smailer
   class MigrationGenerator < Rails::Generators::Base
