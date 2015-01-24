@@ -5,14 +5,22 @@ gemspec
 
 gem "rails", ">= 3.0.0"
 
-group :developmnet do
-  gem "sqlite3"
+group :development do
+  gem 'sqlite3'
+
+  gem 'guard'
+  gem 'guard-bundler'
+  gem 'guard-spork'
+  gem 'guard-rails'
+  gem 'guard-rspec'
 end
 
 group :test do
   gem 'spork'
+
   gem 'rspec'
   gem 'rspec-rails'
+
   gem 'shoulda-matchers'
   gem 'database_cleaner'
 end
