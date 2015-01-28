@@ -4,3 +4,4 @@ pkg/*
 *.tmproj
 .DS_Store
 *.sublime-*
+spec/dummy/log/*
