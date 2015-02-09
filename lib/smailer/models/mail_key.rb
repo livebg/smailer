@@ -22,7 +22,7 @@ module Smailer
       def self.get(email)
         email  = extract_email(email)
         key    = generate(email)
-        stored = where(:key => key).first
+        stored = find_by_key(key)
 
         create :email => email, :key => key unless stored
 
