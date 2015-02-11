@@ -44,6 +44,7 @@ module Smailer
 
         finished.save!
         queued_mail.destroy
+        queued_mail.delete
 
         if update_sent_mails_count && finished.mail_campaign
           finished.mail_campaign.sent_mails_count += 1
