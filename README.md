@@ -4,9 +4,15 @@
 
 This project is a simple mailer for newsletters, which implements simple queue processing, basic campaign management, [VERP support](http://en.wikipedia.org/wiki/Variable_envelope_return_path), bounce processing and auto-unsubscribe of invalid emails and also assists you in implementing unsubscribe links in the email messages.
 
-It is intended to be used within a Rails project. It has been tested with Rails 3.0.x, Rails 3.1.0 and Rails 2.3.5.
+It is intended to be used within a Rails project.
+
+### Supported versions of Rails
+
+It has been tested with Rails 3.0.x, Rails 3.1.0 and Rails 2.3.5.
 
 Note: for Rails 3.0.x, you will probably need to use Smailer 0.5.x, because of a version incompatibility with the `mail` Gem.
+
+It should work with Rails 4 as well, but it hasn't been tested extensively there. Testing and PRs for Rails 4 compatibility are welcome. See [this issue](/livebg/smailer/issues/16) for more info.
 
 ## Install
 
