@@ -12,7 +12,7 @@ It has been tested with Rails 3.0.x, Rails 3.1.0 and Rails 2.3.5.
 
 Note: for Rails 3.0.x, you will probably need to use Smailer 0.5.x, because of a version incompatibility with the `mail` Gem.
 
-It should work with Rails 4 as well, but it hasn't been tested extensively there. Testing and PRs for Rails 4 compatibility are welcome. See [this issue](/livebg/smailer/issues/16) for more info.
+It should work with Rails 4 as well, but it hasn't been tested extensively there. Testing and PRs for Rails 4 compatibility are welcome. See [this issue](https://github.com/livebg/smailer/issues/16) for more info.
 
 ## Install
 
