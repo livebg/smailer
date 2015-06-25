@@ -174,6 +174,11 @@ For more info and also if you'd like to adjust the unsubscribe rules, take a loo
 
 * Tests, tests, tests
 
+## Tests
+
+    ./setup-test-db
+    bundle exec rspec
+
 ## Contribution
 
 Patches are always welcome. In case you find any issues with this code, please use the project's [Issues](http://github.com/mitio/smailer/issues) page on Github to report them. Feel free to contribute! :)

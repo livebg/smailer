@@ -11,6 +11,9 @@ Spork.prefork do
   # in spec/support/ and its subdirectories.
   Dir[File.expand_path('../../spec/support/**/*.rb', __FILE__)].each {|f| require f }
 
+  FactoryGirl.definition_file_paths = [File.expand_path('../../spec/factories/', __FILE__)]
+  FactoryGirl.find_definitions
+
   # Checks for pending migrations before tests are run.
   # If you are not using ActiveRecord, you can remove this line.
   ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
@@ -43,11 +46,26 @@ Spork.prefork do
     #     --seed 1234
     config.order = "random"
 
-    config.before(:suite) { DatabaseCleaner.clean_with :truncation }
-    config.before(:each)  { DatabaseCleaner.strategy = :transaction }
-    config.before(:each)  { DatabaseCleaner.start }
-    config.after(:each)   { DatabaseCleaner.clean }
+    config.before(:suite) do
+      DatabaseCleaner.clean_with(:truncation)
 
+      begin
+        DatabaseCleaner.start
+        FactoryGirl.lint
+      ensure
+        DatabaseCleaner.clean
+      end
+    end
+
+    config.before(:each) do
+      DatabaseCleaner.strategy = :transaction
+
+      DatabaseCleaner.start
+    end
+
+    config.after(:each) do
+      DatabaseCleaner.clean
+    end
   end
 end
 

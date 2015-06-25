@@ -10,8 +10,11 @@ module Smailer
       belongs_to :mailing_list
       has_many :queued_mails, :dependent => :destroy
       has_many :finished_mails, :dependent => :destroy
-      has_many :attachments,
-               :class_name => '::Smailer::Models::MailCampaignAttachment'
+
+      has_one :mail_template, :dependent => :destroy, :autosave => true, :inverse_of => :mail_campaign
+
+      delegate :from,  :subject,  :body_html,  :body_text,  :to => :my_mail_template, :allow_nil => true
+      delegate :from=, :subject=, :body_html=, :body_text=, :to => :my_mail_template
 
       validates_presence_of :mailing_list_id, :from
       validates_numericality_of :mailing_list_id, :unsubscribe_methods, :only_integer => true, :allow_nil => true
@@ -54,8 +57,12 @@ module Smailer
         opened_mails_count.to_f / sent_mails_count
       end
 
+      def attachments
+        my_mail_template.attachments
+      end
+
       def add_attachment(filename, path)
-        self.attachments.create!(:filename => filename, :path => path)
+        my_mail_template.attachments.build(:filename => filename, :path => path)
       end
 
       def self.unsubscribe_methods
@@ -68,6 +75,10 @@ module Smailer
       end
 
       private
+
+      def my_mail_template
+        mail_template || build_mail_template
+      end
 
       def unsubscribe_methods_list_from(method_specification)
         if method_specification == :all
