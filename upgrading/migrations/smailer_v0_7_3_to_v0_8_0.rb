@@ -6,7 +6,7 @@ class SmailerV073ToV080 < ActiveRecord::Migration
 
   class MailTemplate < ActiveRecord::Base
     belongs_to :mail_campaign
-    belongs_to :queued_mail, dependent: :destroy
+    belongs_to :queued_mail, :dependent => :destroy
 
     has_many :mail_attachments
   end
@@ -61,7 +61,7 @@ class SmailerV073ToV080 < ActiveRecord::Migration
     remove_column :mail_campaigns, :body_html
     remove_column :mail_campaigns, :body_text
 
-    add_column :queued_mails, :require_uniqueness, :boolean, default: true
+    add_column :queued_mails, :require_uniqueness, :boolean, :default => true
 
     remove_index :queued_mails, :name => 'index_queued_mails_on_mail_campain_id_and_to'
     add_index    :queued_mails, [:mail_campaign_id, :to, :require_uniqueness], :name => 'index_queued_mails_uniqueness_for_to', :unique => true

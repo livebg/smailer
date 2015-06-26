@@ -10,7 +10,7 @@ module Smailer
       has_many :attachments, :through => :mail_template
 
       validates_presence_of :mail_campaign_id, :to
-      validates_uniqueness_of :to, :scope => :mail_campaign_id, if: proc { |queued_mail| queued_mail.require_uniqueness }
+      validates_uniqueness_of :to, :scope => :mail_campaign_id, :if => proc { |queued_mail| queued_mail.require_uniqueness }
       validates_uniqueness_of :key
       validates_numericality_of :mail_campaign_id, :retries, :only_integer => true, :allow_nil => true
       validates_length_of :to, :last_error, :maximum => 255, :allow_nil => true
