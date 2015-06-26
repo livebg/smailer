@@ -47,7 +47,7 @@ These properties and values are also the defaults.
 
 ## From v0.7.3 to 0.8.0
 
-You can use the (smailer_v0_7_3_to_v0_8_0.rb)[upgrading/migrations/smailer_v0_7_3_to_v0_8_0.rb] migration.
+You can use this [smailer_v0_7_3_to_v0_8_0 migration](upgrading/migrations/smailer_v0_7_3_to_v0_8_0.rb).
 
 Note: attachments are no longer saved by `add_attachment`. You have to call `Smailer::Models::MailCampaign#save` or `Smailer::Models::MailQueue#save` (if it is one-off email)
 
@@ -108,7 +108,7 @@ You could send one-off emails that have different mail template like this:
     # sending two mails to the same person
     campaign.queued_mails.create! :to => 'subscriber@domain.com', :body_html => 'second custom body', :body_text => 'second custom body', require_uniqueness => false
 
-You could change the `from`, `subject`, `body_html`, `body_text` and you can also call `add_attachment`. For more info check (Smailer::Models::QueuedMail)[lib/smailer/models/queued_mail.rb]
+You could change the `from`, `subject`, `body_html`, `body_text` and you can also call `add_attachment`. For more info check [Smailer::Models::QueuedMail](lib/smailer/models/queued_mail.rb)
 
 ### Attachments
 
