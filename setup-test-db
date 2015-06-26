@@ -4,8 +4,9 @@ set -e
 
 cd ./spec/dummy/
 
-find ./db/migrate -type f -exec rm -i {} \;
+find ./db/migrate -type f -exec rm -i {} \; || true
 
+bundle install
 bundle exec rake db:test:purge
 
 ./bin/rails g smailer:migration
