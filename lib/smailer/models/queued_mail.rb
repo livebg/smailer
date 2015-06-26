@@ -16,7 +16,7 @@ module Smailer
       validates_length_of :to, :last_error, :maximum => 255, :allow_nil => true
 
       unless Smailer::Compatibility.rails_4?
-        attr_accessible :mail_campaign_id, :to
+        attr_accessible :mail_campaign_id, :to, :from, :subject, :body_html, :body_text, :require_uniqueness
       end
 
       before_validation :initialize_message_key
