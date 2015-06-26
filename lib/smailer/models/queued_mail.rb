@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'securerandom'
 
 module Smailer
   module Models
@@ -72,7 +73,7 @@ module Smailer
       end
 
       def initialize_message_key
-        self.key = Digest::MD5.hexdigest("#{mail_campaign_id}, #{to} and #{id} compose this key.")
+        self.key = Digest::MD5.hexdigest("#{mail_campaign_id}, #{to}, #{SecureRandom.hex(15)} and #{id} compose this key.")
       end
 
       def interpolate(text)
