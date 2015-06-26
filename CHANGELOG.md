@@ -1,3 +1,25 @@
+## Version v0.8.0
+
+- Adds support for one-off emails to be send via the same queueing mechanism.
+- It is now possible to disable the uniqueness validation for a single email
+  per recipient per campaign by passing `:require_uniqueness => false` when
+  creating a `QueuedMail` record.
+
+**Possible breaking changes:**
+
+- The interface to add an attachment has changed.
+
+    Attachments are no longer saved by `add_attachment`. You have to call
+    `Smailer::Models::MailCampaign#save` or `Smailer::Models::MailQueue#save`
+    (if it is one-off email).
+
+- There have been changes to the database structure.
+
+**Upgrading from v0.7.3 to v0.8.0**
+
+To make the required changes in the database, you can use this
+[smailer_v0_7_3_to_v0_8_0 migration](upgrading/migrations/smailer_v0_7_3_to_v0_8_0.rb).
+
 ## Version v0.7.8 (Feb 11 2015)
 
 Make sure QueuedMail is deleted

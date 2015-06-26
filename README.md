@@ -45,11 +45,9 @@ Since the plugin has been designed to be managed via an admin UI, its settings a
 
 These properties and values are also the defaults.
 
-## From v0.7.3 to 0.8.0
+## Upgrading
 
-You can use this [smailer_v0_7_3_to_v0_8_0 migration](upgrading/migrations/smailer_v0_7_3_to_v0_8_0.rb).
-
-Note: attachments are no longer saved by `add_attachment`. You have to call `Smailer::Models::MailCampaign#save` or `Smailer::Models::MailQueue#save` (if it is one-off email)
+If you have an older version of the gem and would like to upgrade to a newer one, take a look [at the changelog](CHANGELOG.md).
 
 ## Usage and documentation
 
