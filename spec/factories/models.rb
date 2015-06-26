@@ -7,7 +7,7 @@ FactoryGirl.define do
     from    { generate(:email) }
     subject 'Hi there'
     body_html '<h1>Hi there</h1>'
-    body_text '<h1>Hi there</h1>'
+    body_text 'Hi there'
   end
 
   factory :mail_campaign, class: Smailer::Models::MailCampaign do
