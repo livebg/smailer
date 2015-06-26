@@ -77,4 +77,38 @@ describe Smailer::Models::QueuedMail do
       expect(queued_mail_1.key).to_not eq(queued_mail_2.key)
     end
   end
+
+  describe '#require_uniqueness' do
+    it 'is required by default' do
+      mail_campaign = FactoryGirl.create(:mail_campaign)
+
+      queued_mail_1 = Smailer::Models::QueuedMail.new
+      queued_mail_1.mail_campaign = mail_campaign
+      queued_mail_1.to = 'text@example.com'
+      queued_mail_1.save!
+
+      queued_mail_2 = Smailer::Models::QueuedMail.new
+      queued_mail_2.mail_campaign = mail_campaign
+      queued_mail_2.to = 'text@example.com'
+
+      expect(queued_mail_2.save).to eq(false)
+      expect(queued_mail_2.errors[:to]).to be_present
+    end
+
+    it 'could be turned off by setting it to false' do
+      mail_campaign = FactoryGirl.create(:mail_campaign)
+
+      queued_mail_1 = Smailer::Models::QueuedMail.new
+      queued_mail_1.mail_campaign = mail_campaign
+      queued_mail_1.to = 'text@example.com'
+      queued_mail_1.save!
+
+      queued_mail_2 = Smailer::Models::QueuedMail.new
+      queued_mail_2.mail_campaign = mail_campaign
+      queued_mail_2.to = 'text@example.com'
+      queued_mail_2.require_uniqueness = false
+
+      expect(queued_mail_2.save).to eq(true)
+    end
+  end
 end
