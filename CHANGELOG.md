@@ -22,6 +22,8 @@
 
 To make the required changes in the database, you can use this
 [smailer_v0_7_3_to_v0_8_0 migration](upgrading/migrations/smailer_v0_7_3_to_v0_8_0.rb).
+You may need to alter this migration to fit your data.
+**Don't just run it blindly**.
 
 ## Version v0.7.8 (Feb 11 2015)
 
