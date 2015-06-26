@@ -93,20 +93,21 @@ Here is an example how you could proceed with creating and issuing a newsletter:
 
 ### One-off emails
 
-You could send one-off emails that have different mail template like this:
+You can send one-off emails that each have a different mail template:
 
     campaign = Smailer::Models::MailCampaign.first
 
-    # The mail template is copied from the campaign and then you make you changes
-    # e.g. here the subject and from are copied from the campaign
+    # The mail template is first copied from the mail campaign and then any
+    # changes you make are stored in the newly created copy.
+    # In this example, the subject and from fields are copied from the campaign.
     campaign.queued_mails.create! :to => 'subscriber@domain.com', :body_html => 'my custom body', :body_text => 'my custom body'
 
-    # if you change the campaign now it won't change the one-off queued_mails
+    # Changing the campaign now won't change anything in the one-off queued mails.
 
-    # sending two mails to the same person
+    # Sending two mails to the same person for a single campaign:
     campaign.queued_mails.create! :to => 'subscriber@domain.com', :body_html => 'second custom body', :body_text => 'second custom body', require_uniqueness => false
 
-You could change the `from`, `subject`, `body_html`, `body_text` and you can also call `add_attachment`. For more info check [Smailer::Models::QueuedMail](lib/smailer/models/queued_mail.rb)
+You can change the `from`, `subject`, `body_html`, `body_text` and you can also call `add_attachment`. For more info check [Smailer::Models::QueuedMail](lib/smailer/models/queued_mail.rb).
 
 ### Attachments
 
