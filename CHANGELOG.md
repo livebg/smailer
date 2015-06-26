@@ -7,6 +7,7 @@
 
 **Possible breaking changes:**
 
+- The `MailCampaignAttachment` chass is now called `MailAttachment`.
 - The interface to add an attachment has changed.
 
     Attachments are no longer saved by `add_attachment`. You have to call
@@ -14,6 +15,8 @@
     (if it is one-off email).
 
 - There have been changes to the database structure.
+- The message key stored in `QueuedMail#key` is no longer generated based only
+  on predictable input. Now a `SecureRandom`-generated value is alos used.
 
 **Upgrading from v0.7.3 to v0.8.0**
 
