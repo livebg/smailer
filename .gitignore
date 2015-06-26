@@ -5,3 +5,7 @@ pkg/*
 .DS_Store
 *.sublime-*
 spec/dummy/log/*
+spec/dummy/db/development.sqlite3
+spec/dummy/db/migrate/*
+spec/dummy/db/test.sqlite3
+spec/dummy/db/schema.rb

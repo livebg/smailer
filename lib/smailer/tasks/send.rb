@@ -50,7 +50,7 @@ module Smailer
             from    queue_item.from
             to      queue_item.to
             subject queue_item.subject
-            queue_item.mail_campaign.attachments.each do |attachment|
+            queue_item.attachments.each do |attachment|
               cached_attachments[attachment.id] ||= attachment.body
               add_file :filename => attachment.filename,
                        :content => cached_attachments[attachment.id]
