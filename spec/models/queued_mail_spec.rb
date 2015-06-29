@@ -1,6 +1,27 @@
 require 'spec_helper'
 
 describe Smailer::Models::QueuedMail do
+  describe '.new' do
+    it 'will fill the mail_template from the mail_campaign as expected' do
+      mail_campaign = FactoryGirl.create(:mail_campaign, :subject => 'Campaign subject', :from => 'from@campaign.com')
+
+      queued_mail = Smailer::Models::QueuedMail.new(
+        :to => 'someone@world.com',
+        :body_html => 'Custom html body',
+        :body_text => 'Custom text body',
+        :mail_campaign => mail_campaign
+      )
+
+      queued_mail.valid?
+      expect(queued_mail.errors).to be_blank
+
+      expect(queued_mail.from).to      eq('from@campaign.com')
+      expect(queued_mail.subject).to   eq('Campaign subject')
+      expect(queued_mail.body_html).to eq('Custom html body')
+      expect(queued_mail.body_text).to eq('Custom text body')
+    end
+  end
+
   describe '#save' do
     it 'could be made only with mail_campaign and to (recipient)' do
       mail_campaign = FactoryGirl.create(:mail_campaign)
