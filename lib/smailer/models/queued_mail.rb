@@ -16,7 +16,7 @@ module Smailer
       validates_length_of :to, :last_error, :maximum => 255, :allow_nil => true
 
       unless Smailer::Compatibility.rails_4?
-        attr_accessible :mail_campaign_id, :to, :from, :subject, :body_html, :body_text, :require_uniqueness
+        attr_accessible :mail_campaign, :mail_campaign_id, :to, :from, :subject, :body_html, :body_text, :require_uniqueness
       end
 
       before_validation :initialize_message_key
@@ -49,6 +49,22 @@ module Smailer
         my_mail_template.attachments.build(:filename => filename, :path => path)
       end
 
+      def mail_campaign_id=(campaign_id)
+        write_attribute(:mail_campaign_id, campaign_id)
+
+        fill_from_campaign_template
+
+        mail_campaign_id
+      end
+
+      def mail_campaign=(campaign)
+        write_attribute(:mail_campaign_id, campaign.try(:id))
+
+        fill_from_campaign_template
+
+        mail_campaign
+      end
+
       protected
 
       def active_mail_template
@@ -58,16 +74,20 @@ module Smailer
       def my_mail_template
         return mail_template if mail_template.present?
 
-        build_mail_template.tap do |template|
-          if mail_campaign.present?
-            campaign_template = mail_campaign.mail_template
+        build_mail_template.tap { fill_from_campaign_template }
+      end
 
-            template.from      = campaign_template.from
-            template.subject   = campaign_template.subject
-            template.body_html = campaign_template.body_html
-            template.body_text = campaign_template.body_text
+      def fill_from_campaign_template
+        if mail_campaign.present? and mail_template.present?
+          campaign_template = mail_campaign.mail_template
 
-            template.attachments = campaign_template.attachments.map(&:dup)
+          mail_template.from      ||= campaign_template.from
+          mail_template.subject   ||= campaign_template.subject
+          mail_template.body_html ||= campaign_template.body_html
+          mail_template.body_text ||= campaign_template.body_text
+
+          if mail_template.attachments.blank?
+            mail_template.attachments = campaign_template.attachments.map(&:dup)
           end
         end
       end
