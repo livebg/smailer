@@ -25,40 +25,89 @@ describe Smailer::Models::QueuedMail do
       expect(queued_mail.to).to eq('test@example.com')
     end
 
-    it 'would create its own template if you change any of the template attributes and will copy the mail_campaign template' do
-      mail_campaign = FactoryGirl.create(:mail_campaign)
-      mail_campaign.add_attachment 'foo.pdf', '/tmp/foo.pdf'
-      mail_campaign.save!
+    describe 'when changing the mail_template' do
+      [
+        {:from      => 'sender@example.com'},
+        {:subject   => 'MY NEW SUBJECT'},
+        {:body_html => 'NEW HTML BODY'},
+        {:body_text => 'NEW TEXT BODY'},
+      ].each do |changes|
+        it "would copy the mail_campaign template and modify the copy - changing #{changes}" do
+          mail_campaign = FactoryGirl.create(:mail_campaign)
+          mail_campaign.add_attachment 'foo.pdf', '/tmp/foo.pdf'
+          mail_campaign.save!
 
-      queued_mail = Smailer::Models::QueuedMail.new
+          queued_mail = Smailer::Models::QueuedMail.new
 
-      queued_mail.mail_campaign = mail_campaign
-      queued_mail.to = 'text@example.com'
+          queued_mail.mail_campaign = mail_campaign
+          queued_mail.to = 'text@example.com'
 
-      queued_mail.from = 'sender@example.com'
+          changes.each do |key, value|
+            queued_mail.public_send("#{key}=", value)
+          end
 
-      queued_mail.save!
+          queued_mail.save!
 
-      mail_campaign.reload
-      queued_mail.reload
+          mail_campaign.reload
+          queued_mail.reload
 
-      expect(queued_mail.from).to      eq('sender@example.com')
-      expect(queued_mail.body_html).to eq(mail_campaign.body_html)
-      expect(queued_mail.body_text).to eq(mail_campaign.body_text)
-      expect(queued_mail.subject).to   eq(mail_campaign.subject)
+          expect(queued_mail.from).to      eq(changes[:from] || mail_campaign.from)
+          expect(queued_mail.body_html).to eq(changes[:body_html] || mail_campaign.body_html)
+          expect(queued_mail.body_text).to eq(changes[:body_text] || mail_campaign.body_text)
+          expect(queued_mail.subject).to   eq(changes[:subject] || mail_campaign.subject)
 
-      expect(queued_mail.attachments).to be_present
-      expect(mail_campaign.attachments).to be_present
-      expect(queued_mail.attachments.first.path).to eq(mail_campaign.attachments.first.path)
-      expect(queued_mail.attachments.first.filename).to eq(mail_campaign.attachments.first.filename)
+          expect(queued_mail.attachments).to be_present
+          expect(mail_campaign.attachments).to be_present
+          expect(queued_mail.attachments.first.filename).to eq(mail_campaign.attachments.first.filename)
+          expect(queued_mail.attachments.first.path).to eq(mail_campaign.attachments.first.path)
 
-      expect(queued_mail.mail_template).to_not     eq(mail_campaign.mail_template)
-      expect(queued_mail.attachments.first).to_not eq(mail_campaign.attachments.first)
+          expect(queued_mail.mail_template).to_not     eq(mail_campaign.mail_template)
+          expect(queued_mail.attachments.first).to_not eq(mail_campaign.attachments.first)
 
-      expect(Smailer::Models::MailCampaign.count).to eq(1)
-      expect(Smailer::Models::MailTemplate.count).to eq(2)
-      expect(Smailer::Models::MailAttachment.count).to eq(2)
-      expect(Smailer::Models::QueuedMail.count).to eq(1)
+          expect(Smailer::Models::MailCampaign.count).to eq(1)
+          expect(Smailer::Models::MailTemplate.count).to eq(2)
+          expect(Smailer::Models::MailAttachment.count).to eq(2)
+          expect(Smailer::Models::QueuedMail.count).to eq(1)
+        end
+      end
+
+      it "would copy the mail_campaign template when adding an attachment" do
+        mail_campaign = FactoryGirl.create(:mail_campaign)
+        mail_campaign.add_attachment 'foo.pdf', '/tmp/foo.pdf'
+        mail_campaign.save!
+
+        queued_mail = Smailer::Models::QueuedMail.new
+
+        queued_mail.mail_campaign = mail_campaign
+        queued_mail.to = 'text@example.com'
+
+        queued_mail.add_attachment('bar.pdf', '/tmp/bar.pdf')
+
+        queued_mail.save!
+
+        mail_campaign.reload
+        queued_mail.reload
+
+        expect(queued_mail.from).to      eq(mail_campaign.from)
+        expect(queued_mail.body_html).to eq(mail_campaign.body_html)
+        expect(queued_mail.body_text).to eq(mail_campaign.body_text)
+        expect(queued_mail.subject).to   eq(mail_campaign.subject)
+
+        expect(queued_mail.attachments).to be_present
+        expect(mail_campaign.attachments).to be_present
+        expect(queued_mail.attachments.first.filename).to eq(mail_campaign.attachments.first.filename)
+        expect(queued_mail.attachments.first.path).to eq(mail_campaign.attachments.first.path)
+        expect(queued_mail.attachments.last.filename).to eq('bar.pdf')
+        expect(queued_mail.attachments.last.path).to eq('/tmp/bar.pdf')
+
+        expect(queued_mail.mail_template).to_not     eq(mail_campaign.mail_template)
+        expect(queued_mail.attachments.first).to_not eq(mail_campaign.attachments.first)
+
+        expect(Smailer::Models::MailCampaign.count).to eq(1)
+        expect(Smailer::Models::MailTemplate.count).to eq(2)
+        expect(Smailer::Models::MailAttachment.count).to eq(3)
+        expect(Smailer::Models::QueuedMail.count).to eq(1)
+      end
     end
   end
 

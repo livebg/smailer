@@ -26,7 +26,7 @@ module Smailer
 
       delegate :mailing_list, :to => :mail_campaign, :allow_nil => true
       delegate :from, :subject, :to => :active_mail_template, :allow_nil => true
-      delegate :from=, :subject=, :body_html=, :body_text, :to => :my_mail_template
+      delegate :from=, :subject=, :body_html=, :body_text=, :to => :my_mail_template
 
       def body_html
         interpolate active_mail_template.body_html
