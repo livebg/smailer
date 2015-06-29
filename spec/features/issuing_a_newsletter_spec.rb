@@ -14,6 +14,7 @@ describe 'Issuing a newsletter' do
       # create a corresponding mail campaign
       campaign_params = {
         :from      => 'noreply@example.org',
+        :reply_to  => 'contact@example.org',
         :subject   => 'My First Campaign!',
         :body_html => '<h1>Hello</h1><p>World</p>',
         :body_text => 'Hello, world!',
