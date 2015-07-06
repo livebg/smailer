@@ -16,7 +16,7 @@ module Smailer
       validates_length_of :to, :last_error, :maximum => 255, :allow_nil => true
 
       unless Smailer::Compatibility.rails_4?
-        attr_accessible :mail_campaign, :mail_campaign_id, :to, :from, :subject, :body_html, :body_text, :require_uniqueness
+        attr_accessible :mail_campaign, :mail_campaign_id, :to, :from, :reply_to, :subject, :body_html, :body_text, :require_uniqueness
       end
 
       before_validation :initialize_message_key
@@ -25,8 +25,8 @@ module Smailer
       before_save :nullify_false_require_uniqueness
 
       delegate :mailing_list, :to => :mail_campaign, :allow_nil => true
-      delegate :from, :subject, :to => :active_mail_template, :allow_nil => true
-      delegate :from=, :subject=, :body_html=, :body_text=, :to => :my_mail_template
+      delegate :from,  :reply_to,  :subject,  :to => :active_mail_template, :allow_nil => true
+      delegate :from=, :reply_to=, :subject=, :body_html=, :body_text=, :to => :my_mail_template
 
       def body_html
         interpolate active_mail_template.body_html
@@ -82,6 +82,7 @@ module Smailer
           campaign_template = mail_campaign.mail_template
 
           mail_template.from      ||= campaign_template.from
+          mail_template.reply_to  ||= campaign_template.reply_to
           mail_template.subject   ||= campaign_template.subject
           mail_template.body_html ||= campaign_template.body_html
           mail_template.body_text ||= campaign_template.body_text

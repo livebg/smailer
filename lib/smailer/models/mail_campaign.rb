@@ -13,15 +13,15 @@ module Smailer
 
       has_one :mail_template, :dependent => :destroy, :autosave => true, :inverse_of => :mail_campaign
 
-      delegate :from,  :subject,  :body_html,  :body_text,  :to => :my_mail_template, :allow_nil => true
-      delegate :from=, :subject=, :body_html=, :body_text=, :to => :my_mail_template
+      delegate :from,  :reply_to,  :subject,  :body_html,  :body_text,  :to => :my_mail_template, :allow_nil => true
+      delegate :from=, :reply_to=, :subject=, :body_html=, :body_text=, :to => :my_mail_template
 
       validates_presence_of :mailing_list_id, :from
       validates_numericality_of :mailing_list_id, :unsubscribe_methods, :only_integer => true, :allow_nil => true
       validates_length_of :from, :subject, :maximum => 255, :allow_nil => true
 
       unless Smailer::Compatibility.rails_4?
-        attr_accessible :mailing_list_id, :from, :subject, :body_html, :body_text
+        attr_accessible :mailing_list_id, :from, :reply_to, :subject, :body_html, :body_text
       end
 
       def add_unsubscribe_method(method_specification)

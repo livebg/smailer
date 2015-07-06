@@ -4,8 +4,9 @@ FactoryGirl.define do
   end
 
   factory :mail_template, class: Smailer::Models::MailTemplate do
-    from    { generate(:email) }
-    subject 'Hi there'
+    from      { generate(:email) }
+    reply_to  { generate(:email) }
+    subject   'Hi there'
     body_html '<h1>Hi there</h1>'
     body_text 'Hi there'
   end

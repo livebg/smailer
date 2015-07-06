@@ -6,7 +6,8 @@ describe Smailer::Models::QueuedMail do
       mail_campaign = FactoryGirl.create(:mail_campaign, :subject => 'Campaign subject', :from => 'from@campaign.com')
 
       queued_mail = Smailer::Models::QueuedMail.new(
-        :to => 'someone@world.com',
+        :to        => 'someone@world.com',
+        :reply_to  => 'reply@world.com',
         :body_html => 'Custom html body',
         :body_text => 'Custom text body',
         :mail_campaign => mail_campaign
@@ -17,6 +18,7 @@ describe Smailer::Models::QueuedMail do
 
       expect(queued_mail.from).to      eq('from@campaign.com')
       expect(queued_mail.subject).to   eq('Campaign subject')
+      expect(queued_mail.reply_to).to  eq('reply@world.com')
       expect(queued_mail.body_html).to eq('Custom html body')
       expect(queued_mail.body_text).to eq('Custom text body')
     end
@@ -49,6 +51,7 @@ describe Smailer::Models::QueuedMail do
     describe 'when changing the mail_template' do
       [
         {:from      => 'sender@example.com'},
+        {:reply_to  => 'reply@example.com'},
         {:subject   => 'MY NEW SUBJECT'},
         {:body_html => 'NEW HTML BODY'},
         {:body_text => 'NEW TEXT BODY'},
@@ -72,10 +75,11 @@ describe Smailer::Models::QueuedMail do
           mail_campaign.reload
           queued_mail.reload
 
-          expect(queued_mail.from).to      eq(changes[:from] || mail_campaign.from)
+          expect(queued_mail.from).to      eq(changes[:from]      || mail_campaign.from)
+          expect(queued_mail.reply_to).to  eq(changes[:reply_to]  || mail_campaign.reply_to)
           expect(queued_mail.body_html).to eq(changes[:body_html] || mail_campaign.body_html)
           expect(queued_mail.body_text).to eq(changes[:body_text] || mail_campaign.body_text)
-          expect(queued_mail.subject).to   eq(changes[:subject] || mail_campaign.subject)
+          expect(queued_mail.subject).to   eq(changes[:subject]   || mail_campaign.subject)
 
           expect(queued_mail.attachments).to be_present
           expect(mail_campaign.attachments).to be_present

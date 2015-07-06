@@ -68,6 +68,7 @@ Here is an example how you could proceed with creating and issuing a newsletter:
     # create a corresponding mail campaign
     campaign_params = {
       :from      => 'noreply@example.org',
+      :reply_to  => 'contact@example.org',
       :subject   => 'My First Campaign!',
       :body_html => '<h1>Hello</h1><p>World</p>',
       :body_text => 'Hello, world!',
@@ -107,7 +108,7 @@ You can send one-off emails that each have a different mail template:
     # Sending two mails to the same person for a single campaign:
     campaign.queued_mails.create! :to => 'subscriber@domain.com', :body_html => 'second custom body', :body_text => 'second custom body', :require_uniqueness => false
 
-You can change the `from`, `subject`, `body_html`, `body_text` and you can also call `add_attachment`. For more info check [Smailer::Models::QueuedMail](lib/smailer/models/queued_mail.rb).
+You can change the `from`, `reply_to`, `subject`, `body_html`, `body_text` and you can also call `add_attachment`. For more info check [Smailer::Models::QueuedMail](lib/smailer/models/queued_mail.rb).
 
 ### Attachments
 

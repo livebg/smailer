@@ -47,9 +47,10 @@ module Smailer
         items_to_process.each do |queue_item|
           # try to send the email
           mail = Mail.new do
-            from    queue_item.from
-            to      queue_item.to
-            subject queue_item.subject
+            from     queue_item.from
+            reply_to queue_item.reply_to if queue_item.reply_to.present?
+            to       queue_item.to
+            subject  queue_item.subject
             queue_item.attachments.each do |attachment|
               cached_attachments[attachment.id] ||= attachment.body
               add_file :filename => attachment.filename,

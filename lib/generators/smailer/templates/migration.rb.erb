@@ -62,6 +62,7 @@ class CreateSmailerTables < ActiveRecord::Migration
       t.text     "body_text"
       t.datetime "created_at"
       t.datetime "updated_at"
+      t.string   "reply_to"
     end
 
     add_index "mail_templates", ["mail_campaign_id"], :name => "index_mail_templates_on_mail_campaign_id"
