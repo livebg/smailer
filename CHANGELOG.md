@@ -4,8 +4,14 @@
 
 **Major Bug Fixes:**
 
-- `QueuedMail.new(to: …, from: …, mail_campaign: …)` will work as expected 9ff2d80
-- `QueuedMail#body_text=` now works as expected
+- `QueuedMail.new(to: …, from: …, mail_campaign: …)` will work as expected [9ff2d80](/livebg/smailer/commit/9ff2d80)
+- `QueuedMail#body_text=` now works as expected.
+
+**Upgrading from v0.8.0 to v0.8.1**
+
+To make the required changes in the database, you can use this
+[smailer_v0_8_0_to_v0_8_1 migration](upgrading/migrations/smailer_v0_8_0_to_v0_8_1.rb).
+You may need to alter this migration to fit your data.
 
 ## Version v0.8.0
 
