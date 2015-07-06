@@ -4,7 +4,7 @@
 
 **Major Bug Fixes:**
 
-- `QueuedMail.new(to: …, from: …, mail_campaign: …)` will work as expected [9ff2d80](/livebg/smailer/commit/9ff2d80)
+- `QueuedMail.new(to: …, from: …, mail_campaign: …)` will work as expected [9ff2d80](https://github.com/livebg/smailer/commit/9ff2d80).
 - `QueuedMail#body_text=` now works as expected.
 
 **Upgrading from v0.8.0 to v0.8.1**
