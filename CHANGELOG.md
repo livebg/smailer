@@ -1,3 +1,12 @@
+## Version v0.8.1
+
+- Adds support for 'reply-to'
+
+**Major Bug Fixes:**
+
+- `QueuedMail.new(to: …, from: …, mail_campaign: …)` will work as expected 9ff2d80
+- `QueuedMail#body_text=` now works as expected
+
 ## Version v0.8.0
 
 - Adds support for one-off emails to be send via the same queueing mechanism.
