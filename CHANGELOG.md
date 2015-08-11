@@ -1,3 +1,10 @@
+## Version v0.8.2
+
+- Fixes broken unsubscribe and tracking links (broken by improper unique
+  message key regeneration). The issue was introduced in v0.8.0.
+
+No special actions are required to upgrade from v0.8.1.
+
 ## Version v0.8.1
 
 - Adds support for 'reply-to'
