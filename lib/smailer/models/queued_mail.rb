@@ -94,7 +94,7 @@ module Smailer
       end
 
       def initialize_message_key
-        self.key = Digest::MD5.hexdigest("#{mail_campaign_id}, #{to}, #{SecureRandom.hex(15)} and #{id} compose this key.")
+        self.key = self[:key] || Digest::MD5.hexdigest("#{mail_campaign_id}, #{to}, #{SecureRandom.hex(15)} compose this key.")
       end
 
       def interpolate(text)

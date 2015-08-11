@@ -150,6 +150,22 @@ describe Smailer::Models::QueuedMail do
 
       expect(queued_mail_1.key).to_not eq(queued_mail_2.key)
     end
+
+    it 'remains the same once initialized' do
+      queued_mail = Smailer::Models::QueuedMail.new
+      queued_mail.mail_campaign_id = 42
+      queued_mail.to = 'test@example.com'
+
+      expect(SecureRandom).to receive(:hex).once.with(15).and_return('random-string')
+      expect(Digest::MD5).to receive(:hexdigest).once.with('42, test@example.com, random-string compose this key.').and_return('message-key')
+
+      expect(queued_mail.key).to eq('message-key')
+
+      queued_mail.save!
+      queued_mail.reload
+
+      expect(queued_mail.key).to eq('message-key')
+    end
   end
 
   describe '#require_uniqueness' do
