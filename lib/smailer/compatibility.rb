@@ -2,6 +2,10 @@ module Smailer
   module Compatibility
     extend self
 
+    def rails_2?
+      Rails::VERSION::MAJOR == 2
+    end
+
     def rails_3?
       Rails::VERSION::MAJOR == 3
     end
@@ -12,6 +16,10 @@ module Smailer
 
     def rails_3_or_4?
       rails_3? || rails_4?
+    end
+
+    def has_attr_accessible?
+      rails_2? || rails_3?
     end
 
     def save_without_validation(object)

@@ -20,7 +20,7 @@ module Smailer
       validates_numericality_of :mailing_list_id, :unsubscribe_methods, :only_integer => true, :allow_nil => true
       validates_length_of :from, :subject, :maximum => 255, :allow_nil => true
 
-      unless Smailer::Compatibility.rails_4?
+      if Smailer::Compatibility.has_attr_accessible?
         attr_accessible :mailing_list_id, :from, :reply_to, :subject, :body_html, :body_text
       end
 

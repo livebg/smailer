@@ -8,7 +8,7 @@ module Smailer
       validates_uniqueness_of :key
       validates_length_of :email, :key, :maximum => 255
 
-      unless Smailer::Compatibility.rails_4?
+      if Smailer::Compatibility.has_attr_accessible?
         attr_accessible :email, :key
       end
 

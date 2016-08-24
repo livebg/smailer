@@ -15,7 +15,7 @@ module Smailer
       validates_numericality_of :mail_campaign_id, :retries, :only_integer => true, :allow_nil => true
       validates_length_of :to, :last_error, :maximum => 255, :allow_nil => true
 
-      unless Smailer::Compatibility.rails_4?
+      if Smailer::Compatibility.has_attr_accessible?
         attr_accessible :mail_campaign, :mail_campaign_id, :to, :from, :reply_to, :subject, :body_html, :body_text, :require_uniqueness
       end
 

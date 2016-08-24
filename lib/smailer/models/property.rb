@@ -10,7 +10,7 @@ module Smailer
       validates_presence_of :name
       validates_uniqueness_of :name
 
-      unless Smailer::Compatibility.rails_4?
+      if Smailer::Compatibility.has_attr_accessible?
         attr_accessible :name, :value, :notes
       end
 
