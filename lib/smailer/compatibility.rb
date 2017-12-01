@@ -26,11 +26,13 @@ module Smailer
       rails_3_or_4? ? object.save(:validate => false) : object.save(false)
     end
 
-    def update_all(scope, fields, conditions)
+    def update_all(scope, fields, conditions, options)
       if rails_3_or_4?
+        scope = scope.limit(options[:limit]) if options[:limit]
+        scope = scope.order(options[:order]) if options[:order]
         scope.where(conditions).update_all(fields)
       else
-        scope.update_all(fields, conditions)
+        scope.update_all(fields, conditions, options)
       end
     end
   end
