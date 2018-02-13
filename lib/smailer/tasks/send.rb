@@ -1,4 +1,5 @@
 require 'mail'
+require 'securerandom'
 
 module Smailer
   module Tasks
@@ -27,18 +28,21 @@ module Smailer
         expired_locks_condition = ['locked = ? AND locked_at <= ?', true, lock_timeout.seconds.ago.utc]
         Smailer::Compatibility.update_all(Smailer::Models::QueuedMail, {:locked => false}, expired_locks_condition)
 
-        # load the queue items to process
-        queue_sort_order = 'retries ASC, id ASC'
-        items_to_process = if Smailer::Compatibility.rails_3_or_4?
-          Smailer::Models::QueuedMail.where(:locked => false).order(queue_sort_order).limit(batch_size)
-        else
-          Smailer::Models::QueuedMail.all(:conditions => {:locked => false}, :order => queue_sort_order, :limit => batch_size)
-        end
-
         # lock the queue items
-        lock_condition = {:id => items_to_process.map(&:id)}
-        lock_update = {:locked => true, :locked_at => Time.now.utc}
-        Smailer::Compatibility.update_all(Smailer::Models::QueuedMail, lock_update, lock_condition)
+        queue_sort_order = 'retries ASC, id ASC'
+        # A key is only used once and overwritten when/if lock expires
+        lock_key = SecureRandom.hex(8)
+        lock_condition = ["locked = ? AND (defere_to IS NULL OR defer_to <= ?)", false, Time.now.utc]
+        lock_update = {:locked => true, :locked_at => Time.now.utc, :locked_key => lock_key}
+        lock_options = {:order => queue_sort_order, :limit => batch_size}
+        Smailer::Compatibility.update_all(Smailer::Models::QueuedMail, lock_update, lock_condition, lock_options)
+
+        # load the queue items to process
+        items_to_process = if Smailer::Compatibility.rails_3_or_4?
+          Smailer::Models::QueuedMail.where(:locked => true, :lock_key => lock_key).order(queue_sort_order)
+        else
+          Smailer::Models::QueuedMail.all(:conditions => {:locked => true, :lock_key => lock_key}, :order => queue_sort_order)
+        end
 
         # map of attachment ID to contents - so we don't keep opening files
         # or URLs

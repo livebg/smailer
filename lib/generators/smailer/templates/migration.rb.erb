@@ -86,6 +86,8 @@ class CreateSmailerTables < ActiveRecord::Migration
       t.datetime "updated_at"
       t.string   "key"
       t.boolean  "require_uniqueness", :default => true
+      t.string   "locked_key"
+      t.datetime "defer_to"
     end
 
     add_index "queued_mails", ["locked", "locked_at"], :name => "index_queued_mails_on_locked_and_locked_at"
