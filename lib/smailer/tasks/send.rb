@@ -19,11 +19,12 @@ module Smailer
         batch_size   = (Smailer::Models::Property.get('queue.batch_size') || 100).to_i
         max_retries  = (Smailer::Models::Property.get('queue.max_retries') || 0).to_i
         max_lifetime = (Smailer::Models::Property.get('queue.max_lifetime') || 172800).to_i
+        lock_timeout = (Smailer::Models::Property.get('queue.lock_timeout') || 3600).to_i
 
         results = []
 
         # clean up any old locked items
-        expired_locks_condition = ['locked = ? AND locked_at <= ?', true, 1.hour.ago.utc]
+        expired_locks_condition = ['locked = ? AND locked_at <= ?', true, lock_timeout.seconds.ago.utc]
         Smailer::Compatibility.update_all(Smailer::Models::QueuedMail, {:locked => false}, expired_locks_condition)
 
         # load the queue items to process
