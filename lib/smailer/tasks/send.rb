@@ -26,22 +26,22 @@ module Smailer
 
         # clean up any old locked items
         expired_locks_condition = ['locked = ? AND locked_at <= ?', true, lock_timeout.seconds.ago.utc]
-        Smailer::Compatibility.update_all(Smailer::Models::QueuedMail, {:locked => false}, expired_locks_condition)
+        Smailer::Compatibility.update_all(Smailer::Models::QueuedMail, {:locked => false}, expired_locks_condition, {})
 
         # lock the queue items
         queue_sort_order = 'retries ASC, id ASC'
         # A key is only used once and overwritten when/if lock expires
         lock_key = SecureRandom.hex(8)
-        lock_condition = ["locked = ? AND (defere_to IS NULL OR defer_to <= ?)", false, Time.now.utc]
+        lock_condition = ["locked = ? AND (defer_to IS NULL OR defer_to <= ?)", false, Time.now.utc]
         lock_update = {:locked => true, :locked_at => Time.now.utc, :locked_key => lock_key}
         lock_options = {:order => queue_sort_order, :limit => batch_size}
         Smailer::Compatibility.update_all(Smailer::Models::QueuedMail, lock_update, lock_condition, lock_options)
 
         # load the queue items to process
         items_to_process = if Smailer::Compatibility.rails_3_or_4?
-          Smailer::Models::QueuedMail.where(:locked => true, :lock_key => lock_key).order(queue_sort_order)
+          Smailer::Models::QueuedMail.where(:locked => true, :locked_key => lock_key).order(queue_sort_order)
         else
-          Smailer::Models::QueuedMail.all(:conditions => {:locked => true, :lock_key => lock_key}, :order => queue_sort_order)
+          Smailer::Models::QueuedMail.all(:conditions => {:locked => true, :locked_key => lock_key}, :order => queue_sort_order)
         end
 
         # map of attachment ID to contents - so we don't keep opening files
@@ -106,9 +106,14 @@ module Smailer
             results.push [queue_item, :failed]
           else
             # great job, message sent
-            Smailer::Models::FinishedMail.add(queue_item, Smailer::Models::FinishedMail::Statuses::SENT, false)
-            finished_mails_counts[queue_item.mail_campaign.id] += 1
-            results.push [queue_item, :sent]
+            begin
+              Smailer::Models::FinishedMail.add(queue_item, Smailer::Models::FinishedMail::Statuses::SENT, false)
+              finished_mails_counts[queue_item.mail_campaign.id] += 1
+              results.push [queue_item, :sent]
+            rescue Exception => e
+              queue_item.destroy
+              queue_item.delete
+            end
           end
         end
 
